@@ -1,4 +1,4 @@
-# Milestone 4
+# Milestone 4 - Team A
 
 ## Overview
 Configured database connection, added in sessions and logging in/out
