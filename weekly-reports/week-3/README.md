@@ -1,4 +1,4 @@
-# Milestone 3
+# Milestone 3 - Team A
 
 ## Overview
 Set up the front-end installations and set up pages of what we did for our wireframe
