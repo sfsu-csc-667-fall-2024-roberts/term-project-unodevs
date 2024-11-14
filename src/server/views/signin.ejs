@@ -1,16 +1,39 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Sign In</title>
+
 </head>
 <body>
     <h1>Welcome to the Sign In Page</h1>
-
-    
     <div>
         <a href="/home"><button>Homepage</button></a>
+        <a href="/lobby"><button>Lobby</button></a>
+        <a href="/waitingroom"><button>Waiting Room</button></a>
         <a href="/game"><button>Game Page</button></a>
-        <a href="/signin"><button>Sign In</button></a>
-        <a href="/signup"><button>Sign Up</button></a>
+        <% if (!loggedIn) { %>
+            <a href="/signin"><button>Sign In</button></a>
+            <a href="/signup"><button>Sign Up</button></a>
+        <% } else { %>
+            <a href="/logout"><button>Logout</button></a>
+        <% } %>
     </div>
+    <section>
+        <h1> </h1>
+        <form method="post" action="/signin">
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@domain.com" required />
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </section>
+
+
 </body>
 </html>
