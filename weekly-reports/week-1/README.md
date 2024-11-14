@@ -1,4 +1,4 @@
-# Milestone 1
+# Milestone 1 - Team A
 
 ## Project Overview
 This project is an implementation of the game Uno.
