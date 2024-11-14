@@ -1,4 +1,4 @@
-# Milestone 2
+# Milestone 2 - Team A
 
 ## Overview
 Set up the base code for our app
