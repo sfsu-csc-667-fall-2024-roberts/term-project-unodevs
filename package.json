@@ -10,7 +10,12 @@
     "build:dev": "webpack build --mode development --watch",
     "start": "ts-node src/server/index.ts",
     "prepare": "husky",
-    "build": "webpack build"
+    "build": "webpack build",
+    "migrate": "ts-node node_modules/node-pg-migrate/bin/node-pg-migrate.js up -j ts",
+    "rollback": "ts-node node_modules/node-pg-migrate/bin/node-pg-migrate.js down -j ts",
+    "migrate:create": "node-pg-migrate create -j ts --",
+    "migrate:reset": "node-pg-migrate reset --config .pg-migrate-config.js",
+    "migrate:status": "node-pg-migrate status --config .pg-migrate-config.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +30,7 @@
     "@types/livereload": "^0.9.5",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.9.0",
+    "@types/node-pg-migrate": "^2.3.1",
     "@types/pg-promise": "^5.4.3",
     "@types/webpack": "^5.28.5",
     "concurrently": "^9.1.0",
@@ -36,7 +42,7 @@
     "prettier": "^3.3.3",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
   },
@@ -53,7 +59,11 @@
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
     "mysql2": "^3.11.4",
-    "pg-promise": "^11.10.2"
+    "node-pg-migrate": "^7.8.0",
+    "pg": "^8.13.1",
+    "pg-promise": "^11.10.2",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

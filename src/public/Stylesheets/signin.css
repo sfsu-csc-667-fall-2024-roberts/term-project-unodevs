@@ -1,0 +1,109 @@
+/* General body styling */
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  /* Center the header horizontally */
+  h1 {
+    text-align: center;
+    margin: 1rem 0;
+    color: #ee161f;
+  }
+  
+  /* Style the link section */
+  .centered-links {
+    display: flex;
+    align-items: center; /* Center links horizontally */
+    justify-content: center; /* Center links vertically */
+    margin: 2rem auto;
+  }
+  
+  .centered-links a {
+    text-decoration: none; /* Remove underline from links */
+    margin: 0.5rem 0; /* Add vertical spacing between links */
+  }
+  
+  .centered-links button {
+    background: #ee161f; /* Match the form color */
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .centered-links button:hover {
+    transform: scale(1.15);
+  }
+  
+  /* Style the sign-in form */
+  #signinForm {
+    display: flex;
+    flex-direction: column;
+    width: 21rem;
+    margin-top: 3rem;
+    border-radius: 0.5rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 0;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  #signinForm > * {
+    margin-bottom: 0.5rem;
+  }
+  
+  #signinForm header {
+    display: flex;
+    background: #ee161f;
+    margin: 0;
+    height: 4rem;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 0.2rem solid #d6151d;
+  }
+  
+  #signinForm header h2 {
+    color: white;
+  }
+  
+  .input {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 2rem;
+  }
+  
+  .input input {
+    outline: none;
+    border: 1px solid #e5e5e5;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    padding: 0.5rem;
+  }
+  
+  #signinForm button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    margin: 1rem 2rem;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  #signinForm button:hover {
+    transform: scale(1.15);
+  }
+  

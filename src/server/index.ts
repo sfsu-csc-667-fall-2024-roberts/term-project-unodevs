@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // LiveReload setup for development environment
 const staticPath = path.join(process.cwd(), "src", "public");
+app.use(express.static('public'));
 configuration.configureLiveReload(app, staticPath);
 configuration.configureSession(app); // Ensure session configuration
 

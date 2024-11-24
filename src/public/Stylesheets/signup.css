@@ -1,0 +1,129 @@
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  main {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .hidden {
+    display: none !important;
+    margin: 0 !important;
+  }
+  
+  .error-message {
+    background-color: #fee;
+    color: #c33;
+    margin: 0;
+    padding: 0.25rem;
+    flex-basis: 100%;
+  }
+  
+  .input {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 2rem;
+  }
+  
+  .input input {
+    outline: none;
+    border: 1px solid #e5e5e5;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    padding: 0.5rem;
+  }
+  
+  #registerForm {
+    display: flex;
+    flex-direction: column;
+    width: 21rem;
+    margin-top: 5rem;
+    border-radius: 0.5rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 0;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  #registerForm > * {
+    margin-bottom: 0.5rem;
+  }
+  
+  #registerForm button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    margin: 1rem 2rem;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  #registerForm button:hover {
+    transform: scale(1.15);
+    -webkit-transform: scale(1.15);
+    -moz-transform: scale(1.15);
+    -o-transform: scale(1.15);
+  }
+  
+  #registerForm header {
+    display: flex;
+    background: #ee161f;
+    margin: 0;
+    height: 4rem;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 0.2rem solid #d6151d;
+  }
+  
+  #registerForm header h2 {
+    color: white;
+  }
+  
+  #registerForm span {
+    margin: 0.5rem auto 1rem auto;
+  }
+
+  .centered-links {
+    display: flex;
+    align-items: center; /* Center links horizontally */
+    justify-content: center; /* Center links vertically */
+    margin: 2rem auto; /* Add spacing around the links */
+  }
+  
+  .centered-links a {
+    text-decoration: none; /* Remove underline from links */
+    margin: 0.5rem 0; /* Add vertical spacing between links */
+  }
+  
+  .centered-links button {
+    background: #ee161f; /* Match signup box color */
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem; /* Add padding for better appearance */
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .centered-links button:hover {
+    transform: scale(1.15); /* Slight zoom effect on hover */
+  }
+  
+  h1 {
+    text-align: center; /* Horizontally centers the text */
+    margin: 1rem 0; /* Optional: Add some vertical spacing */
+    color: #ee161f; /* Match the color scheme of the signup box */
+  }
