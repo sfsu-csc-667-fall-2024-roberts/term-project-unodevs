@@ -1,0 +1,6 @@
+<% if (errors) { %>
+    <div class="errors-card" id="error-card">
+        <button class="close-btn" onclick="this.parentElement.style.display='none';">x</button>
+        <p class="error-msg"><%= errors.replace(/\n/g, '<br>') %></p>
+    </div>
+<% } %>

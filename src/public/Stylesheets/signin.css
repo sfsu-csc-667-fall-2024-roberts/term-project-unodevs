@@ -8,7 +8,46 @@ body {
     height: 100vh;
     margin: 0;
   }
-  
+
+  /* Error Card Styles */
+  .errors-card {
+    display: block;
+    position: relative; /* Set position to relative to contain the close button */
+    background-color: #ffeeee; /* Light red background for errors */
+    border: 1px solid #ee161f; /* Match the form's primary color */
+    color: #ee161f; /* Text color to match the theme */
+    font-weight: bold;
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: 80%; /* Adjust width for responsiveness */
+    text-align: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ee161f;
+  cursor: pointer;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.close-btn:hover {
+  color: #d6151d;
+}
+
+/* Error Message Text */
+.error-msg {
+  margin: 0;
+  white-space: pre-wrap; /* Handle line breaks */
+}
+
+
   /* Center the header horizontally */
   h1 {
     text-align: center;
@@ -106,4 +145,5 @@ body {
   #signinForm button:hover {
     transform: scale(1.15);
   }
+  
   
