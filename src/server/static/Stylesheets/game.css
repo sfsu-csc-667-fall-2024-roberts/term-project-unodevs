@@ -1,0 +1,132 @@
+/* General body styling */
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    background-color: #ffffff; /* Fallback color */
+    position: relative;
+}
+
+
+/* Header */
+h1 {
+    text-align: center;
+    margin: 1rem 0;
+    color: #ee161f;
+}
+
+/* Navigation Links */
+.centered-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto;
+}
+
+.centered-links button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.centered-links button:hover {
+    transform: scale(1.15);
+}
+
+/* Players Container */
+.players-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    border: 3px solid black;
+    background-color: blue;
+    width: 100%;
+    text-align: center;
+}
+
+.opponent-container {
+    display: flex;
+    flex-direction: column;
+    border: 3px solid black;
+    text-align: center;
+    height: 100%;
+    width: 20%;
+    background-color: red;
+}
+
+.opponent-container:nth-child(even) {
+    background-color: yellow;
+}
+
+.opponent-container > p.opponent-name {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.opponent-container img {
+    height: 120px;
+    width: 60px;
+}
+
+.opponent-container-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Main Game Section */
+main {
+    height: 30%;
+    display: flex;
+    flex-direction: row;
+    margin: 10%;
+    justify-content: center;
+}
+
+.deck-container img,
+.discard-container img {
+    height: 150px;
+    width: 100px;
+}
+
+.game-buttons button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin: 0 0.5rem;
+}
+
+.game-buttons button:hover {
+    transform: scale(1.1);
+}
+
+/* Client Hand */
+.client-hand {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    position: absolute;
+    height: 30%;
+    bottom: 0;
+    width: 100%;
+    background-color: yellow;
+}
+
+.client-hand img.selected {
+    border: 3px solid green;
+}

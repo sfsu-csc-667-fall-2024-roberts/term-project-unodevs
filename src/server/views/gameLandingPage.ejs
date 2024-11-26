@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create a New Game</title>
+    <link rel="stylesheet" href="/Stylesheets/gameLandingPage.css">
+</head>
+<body>
+    <div class="centered-links">
+        <a href="/home"><button>Homepage</button></a>
+        <a href="/lobby"><button>Lobby</button></a>
+        <a href="/waitingroom"><button>Waiting Room</button></a>
+        <a href="/game"><button>Game Page</button></a>
+        <% if (!loggedIn) { %>
+            <a href="/signin"><button>Sign In</button></a>
+            <a href="/signup"><button>Sign Up</button></a>
+        <% } else { %>
+            <a href="/logout"><button>Logout</button></a>
+        <% } %>
+    </div>
+
+    <div class="content-container">
+        <h1>Create a New Game</h1>
+        <form action="/game/create" method="POST">
+            <label for="gameName">Game Name:</label>
+            <input type="text" id="gameName" name="gameName" required>
+            <button type="submit">Create Game</button>
+        </form>
+        <p>Or join an existing game:</p>
+        <form action="/game/join" method="GET">
+            <label for="gameId">Game ID:</label>
+            <input type="text" id="gameId" name="gameId" required>
+            <button type="submit">Join Game</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+/* General body styling */
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    background-color: #ffffff; /* Fallback color */
+    position: relative;
+}
+
+/* Centered logo */
+body::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/UNO_Logo.svg/800px-UNO_Logo.svg.png);
+    background-repeat: no-repeat;
+    background-size: contain; /* Adjusts image size while maintaining aspect ratio */
+    width: 300px; /* Adjust logo size */
+    height: 300px;
+    z-index: -1; /* Ensure it stays behind other content */
+}
+
+/* Content container for forms */
+.content-container {
+    position: relative;
+    z-index: 1; /* Ensure it appears above the background logo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 2rem; /* Add some spacing from the logo */
+}
+
+/* Header */
+h1 {
+    text-align: center;
+    margin: 1rem 0;
+    color: #ee161f;
+}
+
+/* Form styles */
+form {
+    margin: 1rem 0;
+}
+
+label {
+    margin-right: 0.5rem;
+}
+
+input {
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+button:hover {
+    transform: scale(1.1);
+}

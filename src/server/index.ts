@@ -5,14 +5,11 @@ import express from "express";
 import httpErrors from "http-errors";
 import morgan from "morgan";
 import * as path from "path";
-import connectLiveReload from "connect-livereload";
-import livereload from "livereload";
 
 // Import routes
 import * as routes from "./routes/index";
 import * as configuration from "./config";
 import authenticationMiddleware from "./middleware/authentication";
-
 
 dotenv.config();
 
@@ -23,11 +20,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// LiveReload setup for development environment
-const staticPath = path.join(process.cwd(), "src", "public");
-app.use(express.static('public'));
-configuration.configureLiveReload(app, staticPath);
-configuration.configureSession(app); // Ensure session configuration
+// Configure session (make sure this is done before using sessions)
+configuration.configureSession(app);
 
 // Middleware to check if user is logged in
 app.use((req, res, next) => {
@@ -35,10 +29,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(staticPath));
-app.use(cookieParser());
+// Set the view engine to EJS
 app.set("views", path.join(process.cwd(), "src", "server", "views"));
 app.set("view engine", "ejs");
+
+// Serve static files from 'src/server/static'
+app.use(express.static(path.join(process.cwd(), 'src', 'server', 'static')));
 
 // Redirect root to homepage
 app.get("/", (req, res) => {
@@ -48,9 +44,10 @@ app.get("/", (req, res) => {
 // Mount routes
 app.use("/home", routes.homepage);
 app.use("/game", authenticationMiddleware, routes.game);
-app.use("/", routes.authentication); 
+app.use("/", routes.authentication);
 app.use("/lobby", authenticationMiddleware, routes.lobby);
 app.use("/waitingroom", routes.waitingRoom);
+app.use("/test", routes.test);
 
 // Catch 404 and forward to error handler
 app.use((_request, _response, next) => {

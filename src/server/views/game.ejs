@@ -1,12 +1,87 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Page</title>
+    <link rel="stylesheet" href="/Stylesheets/game.css">
+    <style>
+        /* Adjusting sizes for players, cards, and containers */
+        .players-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            border: 2px solid black;
+            background-color: blue;
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .opponent-container {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
+            text-align: center;
+            height: auto;
+            width: 15%;
+            background-color: red;
+            margin: 0.5rem;
+        }
+
+        .opponent-container:nth-child(even) {
+            background-color: yellow;
+        }
+
+        .opponent-container > p.opponent-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .opponent-container img {
+            height: 80px;
+            width: 40px;
+        }
+
+        .client-hand {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            position: absolute;
+            height: 20%;
+            bottom: 0;
+            width: 100%;
+            background-color: yellow;
+            padding: 1rem;
+        }
+
+        .client-hand img.hand-card {
+            height: 80px;
+            width: 50px;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem;
+            position: relative;
+            top: -50px; /* Move the game area up to avoid overlap with the yellow box */
+        }
+
+        .deck-container img,
+        .discard-container img {
+            height: 100px;
+            width: 70px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Game Page</h1>
-
+    <h1>Game Page</h1>
     
-    <div>
+    <!-- Navigation Links -->
+    <div class="centered-links">
         <a href="/home"><button>Homepage</button></a>
         <a href="/lobby"><button>Lobby</button></a>
         <a href="/waitingroom"><button>Waiting Room</button></a>
@@ -18,5 +93,46 @@
             <a href="/logout"><button>Logout</button></a>
         <% } %>
     </div>
+
+    <!-- Game UI -->
+    <div class="players-container">
+        <% playerList.forEach(player => { %>
+            <div class="opponent-container">
+                <p class="opponent-name"><%= player.name %></p>
+                <div class="opponent-container-bottom">
+                    <img src="/images/cards/uno_back.png" alt="back of uno card" />
+                    <p class="opponent-hand-size"><%= player.handSize + "X" %></p>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <main>
+        <div class="game-area">
+            <div class="deck-container">
+                <img src="/images/cards/uno_back.png" alt="back of uno card" />
+            </div>
+            <div class="discard-container">
+                <img src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>" alt="<%= discardCard.color + ' ' + discardCard.symbol %>" />
+            </div>
+        </div>
+        <div class="game-buttons">
+            <form action="/game" method="POST">
+                <button type="submit" name="draw" value="draw">Draw</button>
+                <button type="submit" name="uno" value="uno">Uno</button>
+                <button name="play-button" id="play-button">Play</button>
+            </form>
+        </div>
+        <%- include('partials/chat') %>
+    </main>
+
+    <div class="client-hand">
+        <% clientHand.forEach(card => { %>
+            <img class="hand-card" cardId="<%= card.id %>" src="<%= '/images/cards/' + card.color + '_' + card.symbol + '.png' %>" alt="<%= card.color + ' ' + card.symbol %>" />
+        <% }); %>
+        <p class="hand-size"><%= clientHand.length %></p>
+    </div>
+
+    <script src="/scripts/game.js"></script>
 </body>
 </html>
