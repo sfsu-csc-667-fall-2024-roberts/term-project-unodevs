@@ -1,10 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
     <link rel="stylesheet" href="/Stylesheets/homepage.css">
 </head>
 <body>
+    <header>
+        <div class="inner">
+            <% if (user) { %>
+                <div class="logged-in">
+                    <p>Logged in as: <%= user.username %></p>
+                </div>
+            <% } %>
+        </div>
+    </header>
+
     <main>
         <h1>Welcome to the Homepage</h1>
         <div class="centered-links">
@@ -12,13 +24,34 @@
             <a href="/lobby"><button>Lobby</button></a>
             <a href="/waitingroom"><button>Waiting Room</button></a>
             <a href="/game"><button>Game Page</button></a>
-            <% if (!loggedIn) { %>
+            <% if (typeof loggedIn !== 'undefined' && !loggedIn) { %>
                 <a href="/signin"><button>Sign In</button></a>
                 <a href="/signup"><button>Sign Up</button></a>
             <% } else { %>
                 <a href="/logout"><button>Logout</button></a>
             <% } %>
         </div>
+
+        <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
+            <div id="lobbies-section">
+                <div id="game-list-container">
+                    <h1>Lobbies</h1>
+                </div>
+                <div id="right">
+                        <% if (typeof messages !== 'undefined' && messages) { %>
+                            <%- include('partials/chat', { chatMessages: messages }) %>
+                        <% } %>
+                    </div>
+                </div>
+                <div id="create-game-button-container">
+                    <button id="create-game-button">Create a game</button>
+                </div>
+            </div>
+        <% } %>
     </main>
+
+    <%- include('partials/createGame') %>
+
+    <script src="/scripts/homepage.js"></script>
 </body>
 </html>

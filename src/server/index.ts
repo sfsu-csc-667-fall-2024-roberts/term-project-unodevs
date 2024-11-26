@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 });
 
 // Mount routes
-app.use("/home", routes.homepage);
+app.use("/home", routes.homepage, authenticationMiddleware);
 app.use("/game", authenticationMiddleware, routes.game);
 app.use("/", routes.authentication);
 app.use("/lobby", authenticationMiddleware, routes.lobby);

@@ -31,7 +31,7 @@ const getGame = async (req: Request, res: Response): Promise<void> => {
       { name: "Billy", handSize: 7 },
     ],
     discardCard: { color: "red", symbol: "draw_two" },
-    chatMessages: ["hey what is up bro!?"], 
+    chatMessages: ["Test"], 
   } as GameData);
 };
 

@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("homepage", { message: "Welcome to the Homepage!" });
+  res.render('homepage', { user: req.session.user || null });
 });
 
 export default router;
