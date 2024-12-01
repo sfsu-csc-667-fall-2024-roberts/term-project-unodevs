@@ -1,8 +1,12 @@
-import express from "express";
-const router = express.Router();
+import express, { Router, Request, Response } from "express";
+import { getLobbyUsers } from "../controllers/lobbyControllers";
 
-router.get("/", (req, res) => {
-  res.render("lobby", { message: "Welcome to the Lobby!" });
+const lobbyRouter: Router = express.Router();
+
+lobbyRouter.get("/", (req: Request, res: Response): void => {
+  res.render("lobbySelection.ejs");
 });
 
-export default router;
+lobbyRouter.get("/:id", getLobbyUsers);
+
+export default lobbyRouter;

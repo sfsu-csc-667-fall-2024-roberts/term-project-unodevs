@@ -76,6 +76,7 @@
             width: 70px;
         }
     </style>
+     <script src="/scripts/chat.js" defer></script>
 </head>
 <body>
     <h1>Game Page</h1>
@@ -107,13 +108,14 @@
         <% }); %>
     </div>
 
-    <main>
+    <main id="game-container" data-game-id="<%= gameId %>">
         <div class="game-area">
             <div class="deck-container">
                 <img src="/images/cards/uno_back.png" alt="back of uno card" />
             </div>
             <div class="discard-container">
-                <img src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>" alt="<%= discardCard.color + ' ' + discardCard.symbol %>" />
+                <img src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>" 
+                     alt="<%= discardCard.color + ' ' + discardCard.symbol %>" />
             </div>
         </div>
         <div class="game-buttons">
@@ -123,8 +125,9 @@
                 <button name="play-button" id="play-button">Play</button>
             </form>
         </div>
-        <%- include('partials/chat') %>
+        <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
     </main>
+    
 
     <div class="client-hand">
         <% clientHand.forEach(card => { %>

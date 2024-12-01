@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
     <link rel="stylesheet" href="/Stylesheets/homepage.css">
+    <script src="/scripts/chat.js" defer></script>
 </head>
 <body>
     <header>
@@ -39,7 +40,9 @@
                 </div>
                 <div id="right">
                         <% if (typeof messages !== 'undefined' && messages) { %>
-                            <%- include('partials/chat', { chatMessages: messages }) %>
+                            <% if (messages || messages == null) {%>
+                                <%- include('partials/chat', { chatMessages: messages, roomId: 0 } ) %>
+                                <% }%>
                         <% } %>
                     </div>
                 </div>

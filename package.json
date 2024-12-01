@@ -63,7 +63,8 @@
     "pg": "^8.13.1",
     "pg-promise": "^11.10.2",
     "sequelize": "^6.37.5",
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "socket.io": "^4.8.1"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

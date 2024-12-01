@@ -1,74 +1,85 @@
-var games = [
+const games = [
     {
-        id: 1,
-        name: "Test",
-        max_players: 4,
-        lobby_size: 1,
+      id: 1,
+      name: "Test",
+      max_players: 4,
+      lobby_size: 1,
     },
     {
-        id: 2,
-        name: "Test again",
-        max_players: 4,
-        lobby_size: 2,
+      id: 2,
+      name: "Test again",
+      max_players: 4,
+      lobby_size: 2,
     },
     {
-        id: 3,
-        name: "Test again again",
-        max_players: 4,
-        lobby_size: 3,
+      id: 3,
+      name: "Test again again",
+      max_players: 4,
+      lobby_size: 3,
     },
-];
-games.forEach(function (game) {
-    var outerDiv = document.createElement("div");
+  ];
+  
+  const joinGame = async (gameId) => {
+    try {
+      const res = await fetch("/game/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ gameId: gameId }),
+      });
+      const json = await res.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  games.forEach((game) => {
+    const outerDiv = document.createElement("div");
     outerDiv.classList.add("available-game");
-    var idParagraph = document.createElement("p");
-    idParagraph.innerText = game.id.toString();
-    var nameParagraph = document.createElement("p");
+  
+    const idParagraph = document.createElement("p");
+    idParagraph.innerText = game.id;
+  
+    const nameParagraph = document.createElement("p");
     nameParagraph.innerText = game.name;
-    var lobbySizeParagraph = document.createElement("p");
-    lobbySizeParagraph.innerText = "Players : ".concat(game.lobby_size, "/").concat(game.max_players);
-    var joinButton = document.createElement("button");
-    joinButton.addEventListener("click", function () {
-        alert("Joining game, game ".concat(game.name, ", id ").concat(game.id));
+  
+    const lobbySizeParagraph = document.createElement("p");
+    lobbySizeParagraph.innerText = `Players : ${game.lobby_size}/${game.max_players}`;
+  
+    const joinButton = document.createElement("button");
+    joinButton.addEventListener("click", () => {
+      joinGame(game.id);
     });
     joinButton.innerText = "Join";
-    var innerDiv = document.createElement("div");
+  
+    const innerDiv = document.createElement("div");
     innerDiv.classList.add("game-info");
+  
     outerDiv.appendChild(idParagraph);
     innerDiv.appendChild(nameParagraph);
     innerDiv.appendChild(lobbySizeParagraph);
     outerDiv.appendChild(innerDiv);
     outerDiv.appendChild(joinButton);
-    var gameListContainer = document.getElementById("game-list-container");
-    if (gameListContainer) {
-        gameListContainer.appendChild(outerDiv);
-    }
-});
-// Verify "Create Game" button text
-var menuCreateGameButton = document.getElementById("create-game-button");
-
-// Ensure button displays correct text
-if (menuCreateGameButton) {
-    menuCreateGameButton.innerText = "Create a game";
-}
-
-menuCreateGameButton?.addEventListener("click", function () {
-    var createGameForm = document.getElementById("popup-container");
-    if (createGameForm) {
-        createGameForm.style.display = "flex";
-    }
-});
-
-var closeCreateGameFormButton = document.getElementById("close-popup");
-closeCreateGameFormButton?.addEventListener("click", function () {
-    var createGameForm = document.getElementById("popup-container");
-    if (createGameForm) {
-        createGameForm.style.display = "none";
-    }
-});
-
-var formCreateGameButton = document.getElementById("form-create-game");
-formCreateGameButton?.addEventListener("click", function (e) {
+  
+    document.getElementById("game-list-container").appendChild(outerDiv);
+  });
+  
+  const menuCreateGameButton = document.getElementById("create-game-button");
+  menuCreateGameButton.addEventListener("click", () => {
+    const createGameForm = document.getElementById("popup-container");
+    createGameForm.style.display = "flex";
+  });
+  
+  const closeCreateGameFormButton = document.getElementById("close-popup");
+  closeCreateGameFormButton.addEventListener("click", () => {
+    const createGameForm = document.getElementById("popup-container");
+    createGameForm.style.display = "none";
+  });
+  
+  const formCreateFormButton = document.getElementById("form-create-game");
+  formCreateFormButton.addEventListener("click", (e) => {
     e.preventDefault();
-    alert("For testing purposes, still need to add function for creating games");
-});
+    alert("TODO : fix this form & create the game");
+  });
