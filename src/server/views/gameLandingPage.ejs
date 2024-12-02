@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create a New Game</title>
+    <title>Game Landing Page</title>
     <link rel="stylesheet" href="/Stylesheets/gameLandingPage.css">
+    <script src="/scripts/homepage.js" defer></script>
 </head>
 <body>
+    <!-- Navigation Links -->
     <div class="centered-links">
         <a href="/home"><button>Homepage</button></a>
         <a href="/lobby"><button>Lobby</button></a>
@@ -18,20 +20,34 @@
             <a href="/logout"><button>Logout</button></a>
         <% } %>
     </div>
+    <main>
+        <h1>Game Landing Page</h1>
+    
+        <!-- Create a New Game -->
+        <div id="create-game-section">
+            <h2>Create a New Game</h2>
+            <form action="/game/create" method="POST">
+                <label for="name">Game Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+                <label for="max_players">Max Players:</label>
+                <input type="number" id="max_players" name="max_players" min="2" max="10" required>
+                <button type="submit">Create Game</button>
+            </form>
+        </div>
+    
+        <!-- Join an Existing Game -->
+        <div id="join-game-section">
+            <h2>Available Games</h2>
+            <div id="game-list" class="game-list">
+                <!-- Games will be dynamically populated by homepage.js -->
+            </div>
+            <button id="list-refresh-button">Refresh Game List</button>
+        </div>
+    </main>
 
-    <div class="content-container">
-        <h1>Create a New Game</h1>
-        <form action="/game/create" method="POST">
-            <label for="gameName">Game Name:</label>
-            <input type="text" id="gameName" name="gameName" required>
-            <button type="submit">Create Game</button>
-        </form>
-        <p>Or join an existing game:</p>
-        <form action="/game/join" method="GET">
-            <label for="gameId">Game ID:</label>
-            <input type="text" id="gameId" name="gameId" required>
-            <button type="submit">Join Game</button>
-        </form>
-    </div>
+    <!-- Protected Game Form -->
+    <%- include('partials/protectedGameForm') %>
 </body>
 </html>

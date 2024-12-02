@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Page</title>
+    <title>Uno Game</title>
     <link rel="stylesheet" href="/Stylesheets/game.css">
+    <script src="/scripts/chat.js" defer></script>
+    <script src="/scripts/game.js" defer></script>
     <style>
         /* Adjusting sizes for players, cards, and containers */
         .players-container {
@@ -76,7 +78,6 @@
             width: 70px;
         }
     </style>
-     <script src="/scripts/chat.js" defer></script>
 </head>
 <body>
     <h1>Game Page</h1>
@@ -108,10 +109,9 @@
             </p>
           </div>
         </div>
-  
         <% }); %>
-      </div>
-      <main>
+    </div>
+    <main>
         <div class="deck-container">
           <img src="/images/cards/uno_back.png" alt="back of uno card" />
         </div>
@@ -132,8 +132,8 @@
           </form>
         </div>
         <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
-      </main>
-      <div class="client-hand">
+    </main>
+    <div class="client-hand">
         <% clientHand.forEach(card => { %>
         <img
           class="hand-card"
@@ -148,8 +148,6 @@
         <p class="hand-size">
           <%= clientHand.length %>
         </p>
-      </div>
-
-    <script src="/scripts/game.js"></script>
+    </div>
 </body>
 </html>

@@ -34,22 +34,23 @@
         </div>
 
         <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
-            <div id="lobbies-section">
-                <div id="game-list-container">
-                    <h1>Lobbies</h1>
+            <div id="auth-container">
+                <div id="left">
+                  <%- include('partials/lobbyList') %>
+          
+                  <div id="create-game-button-container">
+                    <button id="create-game-button">Create a game</button>
+                  </div>
                 </div>
                 <div id="right">
-                        <% if (typeof messages !== 'undefined' && messages) { %>
-                            <% if (messages || messages == null) {%>
-                                <%- include('partials/chat', { chatMessages: messages, roomId: 0 } ) %>
-                                <% }%>
-                        <% } %>
-                    </div>
+                  <% if (messages || messages == null) {%>
+                  <%- include('partials/chat', { chatMessages: messages, roomId: 0 } ) %>
+                  <% }%>
                 </div>
-                <div id="create-game-button-container">
-                    <button id="create-game-button">Create a game</button>
-                </div>
-            </div>
+              </div>
+          
+              <%- include('partials/createGame') %>
+              <%- include('partials/protectedGameForm') %>
         <% } %>
     </main>
 

@@ -1,12 +1,19 @@
-import express, { Router, Request, Response } from "express";
-import { getLobbyUsers } from "../controllers/lobbyControllers";
+import express from "express";
+import {
+  getLobbyUsers,
+  getLobbies,
+  getLobby,
+} from "../controllers/lobbyControllers";
 
-const lobbyRouter: Router = express.Router();
+const lobbyRouter = express.Router();
 
-lobbyRouter.get("/", (req: Request, res: Response): void => {
-  res.render("lobbySelection.ejs");
-});
+// Route to get all users in a specific lobby
+lobbyRouter.get("/:id/users", getLobbyUsers);
 
-lobbyRouter.get("/:id", getLobbyUsers);
+// Route to list all available lobbies
+lobbyRouter.get("/list", getLobbies);
+
+// Route to fetch details of a specific lobby
+lobbyRouter.get("/:id", getLobby);
 
 export default lobbyRouter;

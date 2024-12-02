@@ -1,20 +1,33 @@
-import express, { Request, Response, Router } from "express";
-import { playCard, getGame, getGameLandingPage, createGame, joinGame } from "../controllers/gameControllers";
+import express from "express";
+import {
+  playCard,
+  getGame,
+  createGame,
+  joinGame,
+  getMyGames,
+} from "../controllers/gameControllers";
 
-const gameRouter: Router = express.Router();
-// Route for the landing page
-gameRouter.get("/", getGameLandingPage);
+const gameRouter = express.Router();
 
-// Route to handle creating a new game
-gameRouter.post("/create", createGame);
+// Redirect `/game` to the landing page
+gameRouter.get("/", (req, res) => {
+  const loggedIn = !!req.session?.user;
+  res.render("gameLandingPage", { loggedIn });
+});
 
-// Route to handle joining a game
-gameRouter.get("/join", joinGame);
-
-// Route for playing a card in a specific game
+// Route to play a card in a game
 gameRouter.post("/:id/card/play", playCard);
 
-// Route for getting a specific game
+// Route to create a new game
+gameRouter.post("/create", createGame);
+
+// Route to join an existing game
+gameRouter.post("/:id/join", joinGame);
+
+// Route to get the games of the current user
+gameRouter.get("/mine", getMyGames);
+
+// Route to fetch details of a specific game
 gameRouter.get("/:id", getGame);
 
 export default gameRouter;
