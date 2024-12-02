@@ -95,46 +95,60 @@
         <% } %>
     </div>
 
-    <!-- Game UI -->
     <div class="players-container">
         <% playerList.forEach(player => { %>
-            <div class="opponent-container">
-                <p class="opponent-name"><%= player.name %></p>
-                <div class="opponent-container-bottom">
-                    <img src="/images/cards/uno_back.png" alt="back of uno card" />
-                    <p class="opponent-hand-size"><%= player.handSize + "X" %></p>
-                </div>
-            </div>
+        <div class="opponent-container">
+          <p class="opponent-name">
+            <%= player.name %>
+          </p>
+          <div class="opponent-container-bottom">
+            <img src="/images/cards/uno_back.png" alt="back of uno card" />
+            <p class="opponent-hand-size">
+              <%= player.handSize + "X" %>
+            </p>
+          </div>
+        </div>
+  
         <% }); %>
-    </div>
-
-    <main id="game-container" data-game-id="<%= gameId %>">
-        <div class="game-area">
-            <div class="deck-container">
-                <img src="/images/cards/uno_back.png" alt="back of uno card" />
-            </div>
-            <div class="discard-container">
-                <img src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>" 
-                     alt="<%= discardCard.color + ' ' + discardCard.symbol %>" />
-            </div>
+      </div>
+      <main>
+        <div class="deck-container">
+          <img src="/images/cards/uno_back.png" alt="back of uno card" />
+        </div>
+        <div class="discard-container">
+          <img
+            id="discard-card"
+            src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>"
+            alt="<%= discardCard.color + ' ' + discardCard.symbol %>"
+            card-color="<%= discardCard.color %>"
+            card-symbol="<%= discardCard.symbol %>"
+          />
         </div>
         <div class="game-buttons">
-            <form action="/game" method="POST">
-                <button type="submit" name="draw" value="draw">Draw</button>
-                <button type="submit" name="uno" value="uno">Uno</button>
-                <button name="play-button" id="play-button">Play</button>
-            </form>
+          <form action="/game" method="POST">
+            <button type="submit" name="draw" value="draw">Draw</button>
+            <button type="submit" name="uno" value="uno">Uno</button>
+            <button name="play-button" id="play-button">Play</button>
+          </form>
         </div>
         <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
-    </main>
-    
-
-    <div class="client-hand">
+      </main>
+      <div class="client-hand">
         <% clientHand.forEach(card => { %>
-            <img class="hand-card" cardId="<%= card.id %>" src="<%= '/images/cards/' + card.color + '_' + card.symbol + '.png' %>" alt="<%= card.color + ' ' + card.symbol %>" />
+        <img
+          class="hand-card"
+          cardId="<%= card.id %>"
+          id = "<%= 'game#' + gameId + '-card#' + card.id %>"
+          src="<%= '/images/cards/' + card.color + '_' + card.symbol + '.png' %>"
+          alt="<%= card.color + ' ' + card.symbol %>"
+          card-color="<%= card.color %>"
+          card-symbol="<%= card.symbol %>"
+        />
         <% }); %>
-        <p class="hand-size"><%= clientHand.length %></p>
-    </div>
+        <p class="hand-size">
+          <%= clientHand.length %>
+        </p>
+      </div>
 
     <script src="/scripts/game.js"></script>
 </body>

@@ -1,12 +1,30 @@
 let selectedId;
 
-// Get `gameId` from a data attribute on the main container
-const gameId = document.getElementById("game-container").getAttribute("data-game-id");
+//check if the card arg is allowed to be played
+const isLegalMove = (card) => {
+  if (card.color === "wild") return true;
+  const discardCard = document.getElementById("discard-card");
+
+  const color = discardCard.getAttribute("card-color");
+  const symbol = discardCard.getAttribute("card-symbol");
+  console.log(
+    "discard card color: " +
+      color +
+      " symbol: " +
+      symbol +
+      " card color: " +
+      card.color +
+      " symbol: " +
+      card.symbol,
+  );
+  return card.color === color || card.symbol === symbol;
+};
 
 const hand = document.getElementsByClassName("hand-card");
 for (let i = 0; i < hand.length; i++) {
   hand.item(i).addEventListener("click", (event) => {
-    selectedId = event.target.getAttribute("cardId");
+    selectedId = event.target.getAttribute("id");
+    console.log("selected id is: " + selectedId);
     for (let j = 0; j < hand.length; j++) {
       if (hand.item(j) != event.target)
         hand.item(j).classList.remove("selected");
@@ -18,13 +36,29 @@ for (let i = 0; i < hand.length; i++) {
 const playButton = document.getElementById("play-button");
 playButton.addEventListener("click", async (event) => {
   event.preventDefault();
-  // TODO: detect wild card. Prompt user for color
+  console.log("the selected id is: " + selectedId);
+  let cardColor = document
+    .getElementById(selectedId)
+    .getAttribute("card-color");
+  const selectedCard = {
+    color: cardColor,
+    symbol: document.getElementById(selectedId).getAttribute("card-symbol"),
+  };
+  if (!isLegalMove(selectedCard)) {
+    alert("Illegal move"); 
+    return;
+  }
+
+  if (selectedCard.color === "wild") {
+    cardColor = prompt("Choose a color: red, blue, green, or yellow");
+  }
+  console.log("the selected color is: " + cardColor);
   const body = {
     cardId: selectedId,
-    color: "red", // Replace with user input for wild card
-    userId: 21, // TODO: Get from session or backend
+    color: cardColor,
+    userId: 21, 
   };
-
+  const gameId = 3; 
   try {
     const response = await fetch(
       `http://localhost:3000/game/${gameId}/card/play`,
@@ -34,11 +68,11 @@ playButton.addEventListener("click", async (event) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      }
+      },
     );
     const json = await response.json();
     console.log(json);
   } catch (error) {
-    console.error("Error playing card:", error);
+    console.log(error);
   }
 });

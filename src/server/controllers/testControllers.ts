@@ -1,29 +1,13 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
-interface Card {
-  color: string;
-  symbol: string;
-  id: number;
-}
-
-interface Player {
-  name: string;
-  handSize: number;
-}
-
-interface GameData {
-  clientHand: Card[];
-  playerList: Player[];
-  discardCard: Omit<Card, 'id'>;
-  chatMessages: string[];
-}
-
-const getGame = async (req: Request, res: Response): Promise<void> => {
+export const getGame = async (req: Request, res: Response): Promise<void> => {
   res.render("game.ejs", {
+    gameId: 1,
     clientHand: [
       { color: "red", symbol: "draw_two", id: 1 },
       { color: "yellow", symbol: "three", id: 2 },
       { color: "red", symbol: "four", id: 3 },
+      { color: "wild", symbol: "wild", id: 4 },
     ],
     playerList: [
       { name: "Noah", handSize: 4 },
@@ -31,8 +15,6 @@ const getGame = async (req: Request, res: Response): Promise<void> => {
       { name: "Billy", handSize: 7 },
     ],
     discardCard: { color: "red", symbol: "draw_two" },
-    chatMessages: ["Test"], 
-  } as GameData);
+    chatMessages: ["Is this working"],
+  });
 };
-
-export { getGame };
