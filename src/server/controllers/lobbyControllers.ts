@@ -58,7 +58,7 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
   `;
 
   const playerListQuery = `
-    SELECT u.username 
+    SELECT u.username
     FROM users u 
     LEFT JOIN game_users gu ON u.id = gu.users_id 
     WHERE (gu.game_id = $1)
@@ -69,7 +69,7 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
 
     // If the user is not in the lobby, redirect to join page
     if (!lobby) {
-      res.render("lobbySelection", { id: gameId });
+      res.render("joinLobby", { id: gameId });
       return;
     }
 
@@ -82,6 +82,7 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
     // Fetch and render player list
     const players = await db.any(playerListQuery, [gameId]);
     res.render("lobby.ejs", {
+      gameName: lobby.name,
       gameId: gameId,
       players: players,
       chatMessages: ["hey what is up bro!?"], // Example messages

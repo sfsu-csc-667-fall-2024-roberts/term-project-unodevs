@@ -24,15 +24,25 @@
       <% } %>
     </div>
 
+    <h1 id="game-name"><%- gameName %></h1>
+    <h2>Party Members:</h2>
     <div id="player-container">
       <% players.forEach(player => { %>
-      <p class="player-name"><%= player.name %></p>
-      <img class="player-card" src="" alt="<%= player.name %>" />
+        <p class="player-name">
+          <%= player.username %>
+        </p>
       <% }); %>
     </div>
-
-    <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
-    <button id="start-button">Start Game</button>
+    <div class="bottom-container">
+      <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
+      <div id="lobby-button-container">
+        <button id="start-button">Start Game</button>
+        <button id="leave-button">Abandon Game</button>
+      </div>
+    </div>
+    
+    <input type="hidden" name="game-id" id="game-id" value="<%= gameId %>" />
+    
     <script src="/scripts/lobby.js"></script>
   </body>
 </html>

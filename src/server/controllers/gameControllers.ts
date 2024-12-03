@@ -15,6 +15,10 @@ interface GetGameRequestParams {
   id: string;
 }
 
+interface StartGameRequestBody {
+  gameId: string;
+}
+
 interface Card {
   color: string;
   symbol: string;
@@ -89,65 +93,63 @@ const getGame = async (req: Request<GetGameRequestParams>, res: Response): Promi
       chatMessages: ["Hey?"],
     };
 
-    res.render("game.ejs", { ...gameData, gameId });
+    // Ensure `gameName` is included in the rendered data
+    res.render("game.ejs", {
+      gameName: gameRow.name, // Use the `name` field from the gameRow object
+      ...gameData,
+      gameId,
+    });
   } catch (err) {
     console.error("Error fetching game:", err);
     res.status(500).send("Internal server error.");
   }
 };
 
+
 const joinGame = async (req: Request, res: Response): Promise<void> => {
   const { password } = req.body;
   const gameId = req.params.id;
   const userId = req.session?.user?.id;
 
-  console.log("Join Game Request:", { gameId, password, userId });
-
   if (!gameId || !userId) {
-      res.status(400).json({ message: "Game ID and User ID are required." });
-      return;
+    res.status(400).json({ message: "Game ID and User ID are required." });
+    return;
   }
 
   try {
-      const game = await db.oneOrNone(
-          `SELECT id, password, max_players FROM games WHERE id = $1`,
-          [gameId]
+    const game = await db.oneOrNone(
+      `SELECT id, password, max_players FROM games WHERE id = $1`,
+      [gameId]
+    );
+
+    if (!game) {
+      res.status(404).send("Game not found.");
+      return;
+    }
+
+    if (game.password && game.password !== password) {
+      res.status(403).send("Incorrect password.");
+      return;
+    }
+
+    const existingPlayer = await db.oneOrNone(
+      `SELECT game_id FROM game_users WHERE game_id = $1 AND users_id = $2`,
+      [gameId, userId]
+    );
+
+    if (!existingPlayer) {
+      await db.none(
+        `INSERT INTO game_users (game_id, users_id) VALUES ($1, $2)`,
+        [gameId, userId]
       );
+    }
 
-      console.log("Game Found:", game);
-
-      if (!game) {
-          res.status(404).send("Game not found.");
-          return;
-      }
-
-      if (game.password && game.password !== password) {
-          res.status(403).send("Incorrect password.");
-          return;
-      }
-
-      const existingPlayer = await db.oneOrNone(
-          `SELECT game_id FROM game_users WHERE game_id = $1 AND users_id = $2`,
-          [gameId, userId]
-      );
-
-      console.log("Existing Player:", existingPlayer);
-
-      if (!existingPlayer) {
-          await db.none(
-              `INSERT INTO game_users (game_id, users_id) VALUES ($1, $2)`,
-              [gameId, userId]
-          );
-          console.log("User added to game.");
-      }
-
-      res.redirect(`/game/${gameId}`);
+    res.redirect(`/game/${gameId}`);
   } catch (err) {
-      console.error("Error joining game:", err);
-      res.status(500).send("Internal server error.");
+    console.error("Error joining game:", err);
+    res.status(500).send("Internal server error.");
   }
 };
-
 
 const createGame = async (req: Request, res: Response): Promise<void> => {
   const { name, password, max_players } = req.body;
@@ -196,4 +198,22 @@ const getMyGames = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { playCard, getGame, joinGame, createGame, getMyGames };
+const startGame = async (req: Request<any, any, StartGameRequestBody>, res: Response): Promise<void> => {
+  const { gameId } = req.body;
+
+  if (!gameId) {
+    res.status(400).json({ message: "Game ID is required to start the game." });
+    return;
+  }
+
+  try {
+    await db.none(`CALL start_game($1)`, [gameId]);
+    req.app.get("io").to(gameId).emit("game-start", { gameId });
+    res.status(200).json({ message: "Game started successfully." });
+  } catch (err) {
+    console.error("Error starting game:", err);
+    res.status(500).send("Internal server error.");
+  }
+};
+
+export { playCard, getGame, joinGame, createGame, getMyGames, startGame };

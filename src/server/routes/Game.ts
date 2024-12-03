@@ -5,6 +5,7 @@ import {
   createGame,
   joinGame,
   getMyGames,
+  startGame,
 } from "../controllers/gameControllers";
 
 const gameRouter = express.Router();
@@ -29,5 +30,8 @@ gameRouter.get("/mine", getMyGames);
 
 // Route to fetch details of a specific game
 gameRouter.get("/:id", getGame);
+
+gameRouter.post("/startGame", startGame);
+
 
 export default gameRouter;

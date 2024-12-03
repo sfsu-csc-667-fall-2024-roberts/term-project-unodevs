@@ -28,13 +28,12 @@ app.set("io", io); // Make `io` accessible globally for routes and controllers
 io.engine.use(sessionMiddleware); // Share session middleware with Socket.IO
 
 io.on("connection", (socket) => {
-  const session = socket.request.session;
-  if (session) {
-    socket.join(session.id); // Use session ID as a room name
-    console.log(`Socket connected: ${socket.id}, Session ID: ${session.id}`);
-  } else {
-    console.warn("No session found for socket connection");
+  if (socket.handshake.query != undefined) {
+    // join the game room
+    socket.join(socket.handshake.query.id + "");
   }
+  //join your own room
+  socket.join(socket.request.session.id);
 });
 
 // Middleware setup
