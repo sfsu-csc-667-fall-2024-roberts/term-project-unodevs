@@ -50,18 +50,25 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
     FROM games g
     LEFT JOIN game_users gu ON g.id = gu.game_id
     WHERE (g.id = $1)
-    AND g.id IN (
+    AND EXISTS (
       SELECT game_id
       FROM game_users
       WHERE users_id = $2
+      AND game_id = $1
     )
   `;
 
   const playerListQuery = `
     SELECT u.username
-    FROM users u 
-    LEFT JOIN game_users gu ON u.id = gu.users_id 
-    WHERE (gu.game_id = $1)
+    FROM users u
+    LEFT JOIN game_users gu ON u.id = gu.users_id
+    WHERE gu.game_id = $1
+  `;
+
+  const activeGamesQuery = `
+    SELECT g.id, g.name
+    FROM games g
+    WHERE g.active = true
   `;
 
   try {
@@ -81,11 +88,16 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
 
     // Fetch and render player list
     const players = await db.any(playerListQuery, [gameId]);
+
+    // Fetch active games
+    const activeGames = await db.any(activeGamesQuery);
+
     res.render("lobby.ejs", {
       gameName: lobby.name,
       gameId: gameId,
       players: players,
-      chatMessages: ["hey what is up bro!?"], // Example messages
+      activeGames: activeGames,
+      chatMessages: ["hey"], // Example messages
     });
   } catch (error) {
     console.error("Error fetching lobby:", error);
@@ -112,24 +124,23 @@ const getLobbies = async (req: Request, res: Response): Promise<void> => {
       END AS has_password
     FROM games g
     LEFT JOIN game_users gu ON g.id = gu.game_id
-    WHERE (g.active = false)
-    AND g.id NOT IN (
-      SELECT game_id
-      FROM game_users
-      WHERE users_id = $1
-    )
+    WHERE g.active = false
     GROUP BY g.id, g.name, g.max_players
     ORDER BY g.id ASC
   `;
 
   try {
-    const lobbies = await db.any(getLobbiesQuery, [userId]);
-    res.status(200).json(lobbies);
+    const lobbies = await db.any(getLobbiesQuery);
+    res.render("gameLandingPage.ejs", {
+      lobbies, // Pass the lobbies variable to the EJS template
+      loggedIn: !!userId,
+    });
   } catch (error) {
     console.error("Error fetching lobbies:", error);
     res.status(500).send("Internal server error.");
   }
 };
+
 
 // Export the functions
 export { getLobbyUsers, getLobby, getLobbies };

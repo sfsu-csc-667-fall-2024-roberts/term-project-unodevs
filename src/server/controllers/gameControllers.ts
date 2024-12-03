@@ -319,4 +319,8 @@ const drawCard = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { playCard, getGame, joinGame, createGame, getMyGames, startGame, updateActiveSeat, drawCards, reverseDirection, isValidMove, isOutOfTurn, drawCard };
+
+
+export { playCard, getGame, joinGame, createGame, getMyGames,
+startGame, updateActiveSeat, drawCards, reverseDirection, 
+isValidMove, isOutOfTurn, drawCard, };
