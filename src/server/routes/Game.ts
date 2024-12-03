@@ -6,6 +6,7 @@ import {
   joinGame,
   getMyGames,
   startGame,
+  drawCard,
 } from "../controllers/gameControllers";
 
 const gameRouter = express.Router();
@@ -32,6 +33,9 @@ gameRouter.get("/mine", getMyGames);
 gameRouter.get("/:id", getGame);
 
 gameRouter.post("/startGame", startGame);
+
+gameRouter.post("/:id/card/draw", drawCard);
+
 
 
 export default gameRouter;

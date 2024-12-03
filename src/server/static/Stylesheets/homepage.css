@@ -134,3 +134,23 @@ button.send-message {
 button.send-message:hover {
   transform: scale(1.1);
 }
+
+.popup #close-protected-game-form {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  font-weight: bolder;
+  height: fit-content;
+  width: fit-content;
+  cursor: pointer;
+}
+
+#error-message-container {
+  margin: 10px;
+}
+
+#error-message-p {
+  font-size: 20px;
+  font-weight: bold;
+}

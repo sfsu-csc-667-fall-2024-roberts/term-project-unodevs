@@ -216,4 +216,107 @@ const startGame = async (req: Request<any, any, StartGameRequestBody>, res: Resp
   }
 };
 
-export { playCard, getGame, joinGame, createGame, getMyGames, startGame };
+const updateActiveSeat = async (userId: string, gameId: string): Promise<void> => {
+  const getTotalSeats = `SELECT COUNT(*) FROM game_users WHERE game_id = $1`;
+  const getCurrentSeatAndDirection = `SELECT game_users.seat, games.direction
+    FROM game_users
+    JOIN games ON game_users.game_id = games.id
+    WHERE game_users.game_id = $1 AND game_users.users_id = $2`;
+  const updateCurrentPlayer = `UPDATE games SET current_player_id = (SELECT users_id FROM game_users WHERE seat = $1 AND game_id = $2) WHERE id = $2`;
+
+  const totalSeats = Number((await db.one(getTotalSeats, [gameId])).count);
+  const currentSeatAndDirection = await db.one(getCurrentSeatAndDirection, [gameId, userId]);
+
+  const addend = currentSeatAndDirection.direction === "clockwise" ? 1 : -1;
+  let newSeat = currentSeatAndDirection.seat + addend;
+
+  if (newSeat < 1) {
+    newSeat += totalSeats;
+  } else if (newSeat > totalSeats) {
+    newSeat -= totalSeats;
+  }
+
+  await db.none(updateCurrentPlayer, [newSeat, gameId]);
+};
+
+const drawCards = async (currentPlayerId: string, gameId: string, drawNumber: number): Promise<void> => {
+  const getDeckCountQuery = `SELECT COUNT(*) FROM game_cards WHERE game_id = $1 AND user_id IS NULL`;
+
+  const deckCount = await db.oneOrNone(getDeckCountQuery, [gameId]);
+  if (!deckCount || Number(deckCount.count) < drawNumber) {
+    const getDiscardCountQuery = `SELECT COUNT(*) FROM game_cards WHERE game_id = $1 AND discarded = true`;
+    const discardCount = await db.oneOrNone(getDiscardCountQuery, [gameId]);
+    if (!discardCount || discardCount.count < drawNumber) {
+      console.log("No more cards in discard pile or deck, ending game");
+      return;
+    } else {
+      const restoreDeckQuery = `UPDATE game_cards SET user_id = NULL, discarded = false WHERE discarded = true AND game_id = $1`;
+      await db.none(restoreDeckQuery, [gameId]);
+    }
+  }
+
+  const drawCardsQuery = `UPDATE game_cards SET user_id = $1 
+    WHERE game_id = $2 
+    AND card_id IN (SELECT card_id FROM game_cards WHERE user_id IS NULL ORDER BY RANDOM() LIMIT $3)`;
+
+  await db.none(drawCardsQuery, [currentPlayerId, gameId, drawNumber]);
+};
+
+const reverseDirection = async (gameId: string): Promise<void> => {
+  const gameDirectionQuery = `UPDATE games
+    SET direction = (
+      CASE
+          WHEN (SELECT direction FROM games WHERE id = $1) = 'clockwise'::directions THEN 'counterclockwise'::directions
+          ELSE 'clockwise'::directions
+      END
+    )
+    WHERE id = $1`;
+
+  await db.none(gameDirectionQuery, [gameId]);
+};
+
+const isValidMove = async (color: string, symbol: string, gameId: string): Promise<boolean> => {
+  if (symbol === "wild" || symbol === "wild_draw_four") {
+    return true;
+  }
+
+  const activeCardAndColorQuery = `SELECT c.symbol, g.active_color 
+     FROM games g 
+     JOIN cards c ON g.current_card_id = c.id 
+     WHERE g.id = $1`;
+
+  const symbolAndColor = await db.one(activeCardAndColorQuery, [gameId]);
+  return symbolAndColor.active_color === color || symbolAndColor.symbol === symbol;
+};
+
+const isOutOfTurn = async (gameId: string, userId: string): Promise<boolean> => {
+  const getActivePlayerQuery = `SELECT current_player_id FROM games WHERE id = $1`;
+  const activeId = await db.one(getActivePlayerQuery, [gameId]);
+  return activeId.current_player_id !== userId;
+};
+
+const drawCard = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.session?.user?.id;
+  const gameId = req.params.id;
+
+  if (!userId || !gameId) {
+    res.status(400).json({ message: "User ID and Game ID are required." });
+    return;
+  }
+
+  if (await isOutOfTurn(gameId, userId)) {
+    res.status(400).send("It's not your turn.");
+    return;
+  }
+
+  try {
+    await drawCards(userId, gameId, 1);
+    await updateActiveSeat(userId, gameId);
+    res.status(200).send("Card drawn and seat updated.");
+  } catch (err) {
+    console.error("Error during drawCard:", err);
+    res.status(500).send("Internal server error.");
+  }
+};
+
+export { playCard, getGame, joinGame, createGame, getMyGames, startGame, updateActiveSeat, drawCards, reverseDirection, isValidMove, isOutOfTurn, drawCard };

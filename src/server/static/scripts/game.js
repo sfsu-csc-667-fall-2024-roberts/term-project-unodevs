@@ -1,5 +1,6 @@
 let selectedId;
-
+let selectedCardId;
+const gameId = Number(document.getElementById("game-id").value);
 //check if the card arg is allowed to be played
 const isLegalMove = (card) => {
   if (card.color === "wild") return true;
@@ -24,6 +25,8 @@ const hand = document.getElementsByClassName("hand-card");
 for (let i = 0; i < hand.length; i++) {
   hand.item(i).addEventListener("click", (event) => {
     selectedId = event.target.getAttribute("id");
+    let secondHalfOfId = selectedId.split("-")[1]; //selectedId looks like game#15-card#11 for example
+    selectedCardId = secondHalfOfId.substring(5, secondHalfOfId.length); //this gets the actual card id
     console.log("selected id is: " + selectedId);
     for (let j = 0; j < hand.length; j++) {
       if (hand.item(j) != event.target)
@@ -45,20 +48,19 @@ playButton.addEventListener("click", async (event) => {
     symbol: document.getElementById(selectedId).getAttribute("card-symbol"),
   };
   if (!isLegalMove(selectedCard)) {
-    alert("Illegal move"); 
+    alert("Illegal move"); //TODO inform the user in a clean way.
     return;
   }
 
+  //TODO detect wild card. Prompt user for color
   if (selectedCard.color === "wild") {
     cardColor = prompt("Choose a color: red, blue, green, or yellow");
   }
   console.log("the selected color is: " + cardColor);
   const body = {
-    cardId: selectedId,
+    cardId: selectedCardId,
     color: cardColor,
-    userId: 21, 
   };
-  const gameId = 3; 
   try {
     const response = await fetch(
       `http://localhost:3000/game/${gameId}/card/play`,
