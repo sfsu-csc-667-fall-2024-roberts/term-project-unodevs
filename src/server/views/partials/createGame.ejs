@@ -4,23 +4,24 @@
     <button id="close-popup">X</button>
   </header>
   <hr />
-  <form action="/game/create" method="POST" autocomplete="off">
+
+  <form id="create-game-form" autocomplete="off">
     <input
       id="create-game-name"
       type="text"
       name="name"
       placeholder="Name of Game"
-      autocomplete="false"
+      autocomplete="off"
       required
     />
     <input
       id="create-game-password"
       type="text"
       name="password"
-      placeholder="Password"
-      autocomplete="false"
+      placeholder="Password (Optional)"
+      autocomplete="off"
     />
-    <label>Max Number of Players</label>
+    <label for="create-game-max-players">Max Number of Players</label>
     <input
       id="create-game-max-players"
       type="number"
@@ -30,6 +31,7 @@
       max="4"
       required
     />
+    <!-- The button remains the same but will now trigger form submission -->
     <button type="submit" id="form-create-game">Create Game</button>
   </form>
 </div>
