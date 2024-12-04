@@ -603,7 +603,6 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
       max_players || 4,
       userId,
     ]);
-
     const gameId = lobby.id;
 
     // Assign the creator a seat in the game
@@ -613,10 +612,42 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
     `;
     await db.none(assignSeatQuery, [userId, gameId, 1]);
 
+    // Populate the game_cards table with a full deck for this game
+    const populateGameCardsQuery = `
+      INSERT INTO game_cards (card_id, game_id)
+      SELECT id, $1 FROM cards
+    `;
+    await db.none(populateGameCardsQuery, [gameId]);
+
+    // Deal the initial hand (e.g., 7 cards) to the creator
+    const dealCardsQuery = `
+      WITH random_cards AS (
+        SELECT card_id
+        FROM game_cards
+        WHERE game_id = $1
+          AND user_id IS NULL
+        ORDER BY RANDOM()
+        LIMIT 7
+      )
+      UPDATE game_cards
+      SET user_id = $2
+      WHERE card_id IN (SELECT card_id FROM random_cards)
+    `;
+    await db.none(dealCardsQuery, [gameId, userId]);
+
     // Set an initial discard card
     const initialCard = await db.one<Card>(`
-      SELECT id, color, symbol FROM cards ORDER BY RANDOM() LIMIT 1
-    `);
+      SELECT id, color, symbol
+      FROM cards
+      WHERE id IN (
+        SELECT card_id
+        FROM game_cards
+        WHERE game_id = $1 AND user_id IS NULL
+      )
+      ORDER BY RANDOM()
+      LIMIT 1
+    `, [gameId]);
+
     await db.none(
       `UPDATE games SET current_card_id = $1, active_color = $2 WHERE id = $3`,
       [initialCard.id, initialCard.color, gameId]
@@ -628,6 +659,9 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
     res.status(500).send("Internal server error.");
   }
 };
+
+
+
 
 
 
