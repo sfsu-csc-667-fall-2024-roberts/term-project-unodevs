@@ -1,6 +1,7 @@
 import express from "express";
 import { getLobbies } from "../controllers/lobbyControllers";
 
+
 import {
   playCard,
   getGame,
@@ -14,10 +15,13 @@ import {
 const gameRouter = express.Router();
 
 // Redirect `/game` to the landing page
+//commented out for debugging
+/*
 gameRouter.get("/", (req, res) => {
   const loggedIn = !!req.session?.user;
   res.render("gameLandingPage", { loggedIn });
 });
+*/
 
 // Route to play a card in a game
 gameRouter.post("/:id/card/play", playCard);

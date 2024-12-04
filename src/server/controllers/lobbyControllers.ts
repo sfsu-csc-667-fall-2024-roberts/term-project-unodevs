@@ -124,7 +124,6 @@ const getLobbies = async (req: Request, res: Response): Promise<void> => {
       END AS has_password
     FROM games g
     LEFT JOIN game_users gu ON g.id = gu.game_id
-    WHERE g.active = false
     GROUP BY g.id, g.name, g.max_players
     ORDER BY g.id ASC
   `;
