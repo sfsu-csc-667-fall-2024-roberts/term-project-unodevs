@@ -660,11 +660,6 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-
-
-
-
 // Get the games that the user is part of
 const getMyGames = async (req: Request, res: Response): Promise<void> => {
   const userId = req.session?.user?.id;
