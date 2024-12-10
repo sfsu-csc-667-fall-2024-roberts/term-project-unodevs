@@ -1,4 +1,4 @@
-import { User } from "../../server/db/users"; // Adjust path if necessary
+import { User } from "../../server/db/users"; 
 import "express-session";
 
 declare module "express-session" {

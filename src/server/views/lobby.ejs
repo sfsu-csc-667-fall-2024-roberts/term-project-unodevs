@@ -4,17 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lobby</title>
-    <link rel="stylesheet" type="text/css" href="/Stylesheets/homepage.css" />
+    <link rel="stylesheet" type="text/css" href="/Stylesheets/lobby.css" />
     <script src="/scripts/chat.js" defer></script>
+    <script type="module" src="/scripts/lobby.js" defer></script>
   </head>
   <body>
-
-    <h1>Welcome to the Lobby</h1>
+    <h1>Lobby for Game <%- gameId %></h1>
 
     <div>
       <a href="/home"><button>Homepage</button></a>
       <a href="/lobby"><button>Lobby</button></a>
-      <a href="/waitingroom"><button>Waiting Room</button></a>
       <a href="/game"><button>Game Page</button></a>
       <% if (!loggedIn) { %>
       <a href="/signin"><button>Sign In</button></a>
@@ -24,25 +23,24 @@
       <% } %>
     </div>
 
-    <h1 id="game-name"><%- gameName %></h1>
     <h2>Party Members:</h2>
     <div id="player-container">
       <% players.forEach(player => { %>
-        <p class="player-name">
-          <%= player.username %>
-        </p>
+      <p class="player-name">
+        <%= player.username %>
+      </p>
       <% }); %>
     </div>
+
+    <!-- Chat partial included -->
     <div class="bottom-container">
-      <%- include('partials/chat', { chatMessages: messages, roomId: gameId } ) %>
+      <%- include('partials/chat', { chatMessages: messages, roomId: gameId }) %>
       <div id="lobby-button-container">
         <button id="start-button">Start Game</button>
         <button id="leave-button">Abandon Game</button>
       </div>
     </div>
-    
-    <input type="hidden" name="game-id" id="game-id" value="<%= gameId %>" />
-    
-    <script src="/scripts/lobby.js"></script>
+
+    <input type="hidden" id="game-id" value="<%= gameId %>" />
   </body>
 </html>

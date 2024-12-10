@@ -419,103 +419,86 @@ const playCard = async (
 };
 
 // Get the initial game state
-const getGame = async (req: Request<GetGameRequestParams>, res: Response): Promise<void> => {
-  const gameId = req.params.id;
+const getGame = async (req: Request, res: Response): Promise<void> => {
+  const gameId = parseInt(req.params.id); // Ensures gameId is an integer
   const userId = req.session?.user?.id;
 
-  if (!gameId || !userId) {
-    res.status(400).send("Game ID and User ID are required.");
+  if (isNaN(gameId)) {
+    res.status(400).send("Invalid game ID.");
     return;
   }
 
-  let game: any;
-  let clientHand: Card[];
-  let playerData: Player[];
-  let currentCard: Card | null = null;
+  if (!userId) {
+    res.status(401).send("Unauthorized. Please log in.");
+    return;
+  }
 
   try {
-    game = await db.oneOrNone(`SELECT * FROM games WHERE id = $1`, [gameId]);
+    // Fetch game details
+    const game = await db.oneOrNone(`SELECT * FROM games WHERE id = $1`, [gameId]);
 
     if (!game) {
-      res.status(404).send("Game does not exist.");
+      res.status(404).send("Game not found.");
       return;
     }
-  } catch (err) {
-    console.error("Error getting game:", err);
-    res.status(500).send("Could not get game.");
-    return;
-  }
 
-  try {
-    clientHand = await db.any<Card>(
+    // Fetch the current player's hand
+    const clientHand = await db.any<Card>(
       `
-      SELECT * FROM cards WHERE id IN (
-        SELECT card_id FROM game_cards WHERE game_id = $1 AND user_id = $2 AND discarded = false
-      )
-    `,
+      SELECT c.id, c.color, c.symbol
+      FROM cards c
+      JOIN game_cards gc ON c.id = gc.card_id
+      WHERE gc.game_id = $1 AND gc.user_id = $2 AND gc.discarded = false
+      `,
       [gameId, userId]
     );
-  } catch (err) {
-    console.error("Error getting player hand:", err);
-    res.status(500).send("Could not get player hand.");
-    return;
-  }
 
-  try {
-    playerData = await db.any<Player>(
+    // Fetch player list and their hand sizes
+    const playerList = await db.any<Player>(
       `
-      SELECT u.username AS name, u.id, COUNT(gc.card_id) AS handcount
+      SELECT u.id, u.username AS name, COUNT(gc.card_id) AS handSize
       FROM users u
       JOIN game_cards gc ON u.id = gc.user_id
-      WHERE gc.game_id = $1
-        AND u.id IN (
-          SELECT user_id
-          FROM game_cards
-          WHERE game_id = $1 AND user_id != $2
-        )
-        AND gc.discarded = false
-      GROUP BY u.id
-      ORDER BY u.id;
-    `,
-      [gameId, userId]
+      WHERE gc.game_id = $1 AND gc.discarded = false
+      GROUP BY u.id, u.username
+      ORDER BY u.id
+      `,
+      [gameId]
     );
-  } catch (err) {
-    console.error("Error getting player data:", err);
-    res.status(500).send("Could not get player data.");
-    return;
+
+    // Fetch the current discard card
+    const discardCard = game.current_card_id
+      ? await db.one<Card>(
+          `SELECT id, color, symbol FROM cards WHERE id = $1`,
+          [game.current_card_id]
+        )
+      : {
+          id: 0,
+          color: "wild",
+          symbol: "wild",
+        };
+
+    // Add the active color to the discard card
+    discardCard.color = game.active_color;
+
+    // Construct game data
+    const gameData: GameData = {
+      gameId: gameId.toString(),
+      gameName: game.name,
+      clientId: userId.toString(),
+      activePlayerId: game.current_player_id,
+      clientHand: clientHand,
+      playerList: playerList,
+      discardCard: discardCard,
+      chatMessages: ["Welcome to the game!"],
+    };
+
+    // Render the game page
+    res.render("game.ejs", gameData);
+  } catch (error) {
+    console.error("Error fetching game:", error);
+    res.status(500).send("Internal server error.");
   }
-
-  try {
-    if (game.current_card_id) {
-      currentCard = await db.one<Card>(`SELECT * FROM cards WHERE id = $1`, [
-        game.current_card_id,
-      ]);
-      currentCard.color = game.active_color;
-    } else {
-      currentCard = {
-        id: 0,
-        color: "blue",
-        symbol: "wild",
-      }; // Fallback card
-    }
-  } catch (err) {
-    console.error("Error getting discard card:", err);
-    res.status(500).send("Could not get discard card.");
-    return;
-  }
-
-  const gameData: GameData = {
-    gameId: gameId,
-    gameName: game.name,
-    clientId: userId,
-    activePlayerId: game.current_player_id,
-    clientHand: clientHand,
-    playerList: playerData,
-    discardCard: currentCard!,
-    chatMessages: ["Welcome to the Game!"],
-  };
-
-  res.render("game.ejs", gameData);
 };
 
 
@@ -687,26 +670,28 @@ const getMyGames = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Start a game
-const startGame = async (req: Request<any, any, StartGameRequestBody>, res: Response): Promise<void> => {
+const startGame = async (req: Request, res: Response): Promise<void> => {
   const { gameId } = req.body;
-  const userId = req.session?.user?.id;
 
-  if (!gameId || !userId) {
-    res.status(400).json({ message: "Game ID and User ID are required to start the game." });
+  if (!gameId) {
+    res.status(400).send("Game ID is required.");
     return;
   }
 
-  const startGameQuery = `CALL start_game($1)`;
-
   try {
-    await db.none(startGameQuery, [gameId]);
-    req.app.get("io").to(gameId).emit("game-start", { gameId, userId });
+    // Mark the game as active in the database
+    await db.none("UPDATE games SET active = TRUE WHERE id = $1", [gameId]);
+
+    // Emit the "game-start" event to all clients in the room
+    req.app.get("io").to(gameId.toString()).emit("game-start", { gameId });
+
     res.status(200).json({ message: "Game started successfully." });
   } catch (err) {
     console.error("Error starting game:", err);
     res.status(500).send("Internal server error.");
   }
 };
+
 
 export {
   playCard,

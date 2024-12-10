@@ -1,5 +1,6 @@
 import express from "express";
 import { getLobbies } from "../controllers/lobbyControllers";
+import { startGame } from "../controllers/gameControllers";
 
 
 import {
@@ -8,7 +9,6 @@ import {
   createGame,
   joinGame,
   getMyGames,
-  startGame,
   drawCard,
 } from "../controllers/gameControllers";
 
@@ -43,9 +43,6 @@ gameRouter.post("/startGame", startGame);
 gameRouter.post("/:id/card/draw", drawCard);
 
 gameRouter.get("/", getLobbies); // Use `getLobbies` to render `gameLandingPage.ejs`
-
-
-
 
 
 export default gameRouter;

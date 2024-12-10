@@ -49,13 +49,13 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
     SELECT g.id, g.name, g.active
     FROM games g
     LEFT JOIN game_users gu ON g.id = gu.game_id
-    WHERE (g.id = $1)
-    AND EXISTS (
-      SELECT game_id
-      FROM game_users
-      WHERE users_id = $2
-      AND game_id = $1
-    )
+    WHERE g.id = $1
+      AND EXISTS (
+        SELECT game_id
+        FROM game_users
+        WHERE users_id = $2
+          AND game_id = $1
+      )
   `;
 
   const playerListQuery = `
@@ -65,45 +65,31 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
     WHERE gu.game_id = $1
   `;
 
-  const activeGamesQuery = `
-    SELECT g.id, g.name
-    FROM games g
-    WHERE g.active = true
-  `;
-
   try {
     const lobby = await db.oneOrNone(getLobbyQuery, [gameId, userId]);
 
-    // If the user is not in the lobby, redirect to join page
+    // If the user is not part of the lobby, redirect to join page
     if (!lobby) {
       res.render("joinLobby", { id: gameId });
-      return;
-    }
-
-    // If lobby is active, redirect to the game page
-    if (lobby.active) {
-      res.redirect(`/game/${gameId}`);
       return;
     }
 
     // Fetch and render player list
     const players = await db.any(playerListQuery, [gameId]);
 
-    // Fetch active games
-    const activeGames = await db.any(activeGamesQuery);
-
     res.render("lobby.ejs", {
       gameName: lobby.name,
       gameId: gameId,
       players: players,
-      activeGames: activeGames,
-      chatMessages: ["hey"], // Example messages
+      messages: [], // Optional: Chat messages for the lobby
+      loggedIn: !!req.session?.user,
     });
   } catch (error) {
     console.error("Error fetching lobby:", error);
     res.status(500).send("Internal server error.");
   }
 };
+
 
 // Fetch all available lobbies the user can join
 const getLobbies = async (req: Request, res: Response): Promise<void> => {

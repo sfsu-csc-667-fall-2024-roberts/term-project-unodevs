@@ -28,12 +28,15 @@ app.set("io", io); // Make `io` accessible globally for routes and controllers
 io.engine.use(sessionMiddleware); // Share session middleware with Socket.IO
 
 io.on("connection", (socket) => {
-  if (socket.handshake.query != undefined) {
-    // join the game room
-    socket.join(socket.handshake.query.id + "");
+  const gameId = socket.handshake.query.id;
+
+  if (!gameId) {
+    console.error("Game ID not provided in handshake query.");
+    return;
   }
-  //join your own room
-  socket.join(socket.request.session.id);
+
+  console.log(`Socket connected to Game ID: ${gameId}`);
+  socket.join(gameId.toString());
 });
 
 // Middleware setup
@@ -65,8 +68,6 @@ app.use("/home", routes.homepage, authenticationMiddleware, routes.chat);
 app.use("/game", authenticationMiddleware, routes.game, routes.chat);
 app.use("/", routes.authentication);
 app.use("/lobby", authenticationMiddleware, routes.lobby, routes.chat);
-app.use("/waitingroom", routes.waitingRoom);
-app.use("/test", routes.test);
 app.use("/chat", authenticationMiddleware, routes.chat);
 // Catch 404 and forward to error handler
 app.use((_req, _res, next) => {

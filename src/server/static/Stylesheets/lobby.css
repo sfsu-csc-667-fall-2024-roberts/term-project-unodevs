@@ -1,0 +1,166 @@
+/* General body styling */
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    margin: 0;
+  
+    background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/UNO_Logo.svg/800px-UNO_Logo.svg.png");
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 300px;
+  }
+  
+  /* Add spacing at the top so content doesn't overlap the logo */
+  body > h1:first-of-type {
+    margin-top: 15rem; /* Adjust if needed */
+  }
+  
+  /* Headings */
+  h1, h2 {
+    text-align: center;
+    color: #ee161f;
+    margin: 1rem 0;
+  }
+  
+  /* Center the link buttons similarly to other pages */
+  body > div:first-of-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto;
+  }
+  
+  body > div:first-of-type a {
+    text-decoration: none;
+    margin: 0.5rem 0;
+  }
+  
+  body > div:first-of-type button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, 
+                rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  body > div:first-of-type button:hover {
+    transform: scale(1.15);
+  }
+  
+  /* Game name styling */
+  #game-name {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  /* Player container */
+  #player-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+  }
+  
+  .player-name {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Bottom container for chat and buttons */
+  .bottom-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 90%;
+    margin-bottom: 2rem;
+  }
+  
+  /* Lobby button container */
+  #lobby-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  /* Lobby-specific buttons */
+  #start-button, #leave-button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, 
+                rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  #start-button:hover, #leave-button:hover {
+    transform: scale(1.15);
+  }
+  
+  /* Chat styling (inherited from partials/chat if necessary)
+     If you have specific chat styling, copy it from homepage.css or
+     make sure it blends in with these styles. */
+  .chat-container {
+    width: 60%;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.5rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 1rem;
+    margin-right: 2rem;
+  }
+  
+  /* Scrollable messages section if applicable */
+  .chat-messages {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  
+  /* Input and send button for chat */
+  .chat-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    outline: none;
+    border: 1px solid #e5e5e5;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
+                rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  
+  .chat-input button {
+    background: #ee161f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .chat-input button:hover {
+    transform: scale(1.1);
+  }
+  
