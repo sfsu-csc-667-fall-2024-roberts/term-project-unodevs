@@ -23,8 +23,10 @@
     <main>
         <h1>Available Games</h1>
 
+        <% if (lobbies.length === 0) { %>
+            <p id="no-games-message">No games available. Please create a new game!</p>
+        <% } %>
 
-        <!-- Game List -->
         <div id="game-list" class="game-list">
             <% lobbies.forEach(lobby => { %>
             <div class="game-entry">

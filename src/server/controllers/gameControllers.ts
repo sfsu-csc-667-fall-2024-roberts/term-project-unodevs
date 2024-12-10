@@ -505,7 +505,7 @@ const getGame = async (req: Request, res: Response): Promise<void> => {
 // Handle joining a game
 const joinGame = async (req: Request, res: Response): Promise<void> => {
   const { password } = req.body;
-  const gameId = req.params.id;
+  const { id: gameId } = req.params;
   const userId = req.session?.user?.id;
 
   if (!gameId || !userId) {
@@ -513,54 +513,45 @@ const joinGame = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const getLobbyQuery = `
-    SELECT
-      g.id, g.password, g.max_players,
-      COUNT(gu.users_id) AS player_count
-    FROM games g
-    LEFT JOIN game_users gu ON g.id = gu.game_id
-    WHERE g.id = $1
-    GROUP BY g.id
-  `;
-
   try {
-    const lobby = await db.oneOrNone(getLobbyQuery, [gameId]);
+    // Fetch the game details
+    const game = await db.oneOrNone(
+      `SELECT id, password FROM games WHERE id = $1`,
+      [gameId]
+    );
 
-    if (!lobby) {
-      res.status(404).send("Lobby does not exist");
+    if (!game) {
+      res.status(404).json({ message: "Game not found." });
       return;
     }
 
-    if (lobby.password && lobby.password !== password) {
-      res.status(403).send("Incorrect password.");
+    // Check password if the game is password-protected
+    if (game.password && game.password !== password) {
+      res.status(403).json({ message: "Incorrect password." });
       return;
     }
 
-    if (lobby.player_count >= lobby.max_players) {
-      res.status(403).send("Lobby is full");
-      return;
-    }
+    // Check if the user is already in the game
+    const userInGame = await db.oneOrNone(
+      `SELECT * FROM game_users WHERE game_id = $1 AND users_id = $2`,
+      [gameId, userId]
+    );
 
-    const checkAlreadyJoinedQuery = `
-      SELECT game_id FROM game_users
-      WHERE game_id = $1 AND users_id = $2
-    `;
-    const existingPlayer = await db.oneOrNone(checkAlreadyJoinedQuery, [gameId, userId]);
-
-    if (!existingPlayer) {
-      const addUserToLobby = `
-        INSERT INTO game_users (game_id, users_id)
-        VALUES ($1, $2)
-      `;
-      await db.none(addUserToLobby, [gameId, userId]);
+    if (!userInGame) {
+      // Add the user to the game
+      await db.none(
+        `INSERT INTO game_users (game_id, users_id) VALUES ($1, $2)`,
+        [gameId, userId]
+      );
     }
 
     res.redirect(`/lobby/${gameId}`);
   } catch (err) {
     console.error("Error joining game:", err);
-    res.status(500).send("Internal server error.");
+    res.status(500).json({ message: "Internal server error." });
   }
 };
+
 
 // Handle creating a new game
 const createGame = async (req: Request, res: Response): Promise<void> => {
@@ -692,6 +683,24 @@ const startGame = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const abandonGame = async (req: Request, res: Response): Promise<void> => {
+  const { id: gameId } = req.params;
+  const userId = req.session?.user?.id;
+
+  if (!userId) {
+    res.status(401).send("User not authenticated.");
+    return;
+  }
+
+  try {
+    console.log(`User ${userId} left the game ${gameId}.`);
+    res.status(200).send("Game left successfully."); 
+  } catch (error) {
+    console.error("Error leaving game:", error);
+    res.status(500).send("Internal server error.");
+  }
+};
+
 
 export {
   playCard,
@@ -706,4 +715,5 @@ export {
   reverseDirection,
   isValidMove,
   isOutOfTurn,
+  abandonGame,
 };

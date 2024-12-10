@@ -10,6 +10,7 @@ import {
   joinGame,
   getMyGames,
   drawCard,
+  abandonGame,
 } from "../controllers/gameControllers";
 
 const gameRouter = express.Router();
@@ -43,6 +44,8 @@ gameRouter.post("/startGame", startGame);
 gameRouter.post("/:id/card/draw", drawCard);
 
 gameRouter.get("/", getLobbies); // Use `getLobbies` to render `gameLandingPage.ejs`
+
+gameRouter.post("/:id/abandon", abandonGame);
 
 
 export default gameRouter;
