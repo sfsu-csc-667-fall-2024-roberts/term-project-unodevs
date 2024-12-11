@@ -4,4 +4,5 @@ export { default as homepage } from "./Homepage";
 export { default as lobby } from "./lobby";
 export { default as test } from "./Test";
 export { default as chat } from "./chat";
+export { default as Rules } from "./rules";
 

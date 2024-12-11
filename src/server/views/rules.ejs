@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNO Rules</title>
+  <link rel="stylesheet" href="/Stylesheets/rules.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="centered-links">
+        <li><a href="/home"><button>Homepage</button></a></li>
+        <li><a href="/rules" class="active"><button>Rules</button></a></li>
+        <li><a href="/game"><button>Game Page</button></a></li>
+        <% if (typeof loggedIn !== "undefined" && !loggedIn) { %>
+          <li><a href="/signin"><button>Sign In</button></a></li>
+          <li><a href="/signup"><button>Sign Up</button></a></li>
+        <% } else { %>
+          <li><a href="/logout"><button>Logout</button></a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>How to Play UNO</h1>
+
+    <section>
+      <h2>Objective</h2>
+      <p>The goal of UNO is to be the first player to get rid of all your cards.</p>
+    </section>
+
+    <section>
+      <h2>Setup</h2>
+      <p>Each player is dealt 7 cards. The remaining cards form a draw pile, and the top card is placed face up to start the discard pile to play your cards.</p>
+    </section>
+
+    <section>
+      <h2>Gameplay</h2>
+      <ol>
+        <li>Players take turns playing a card from their hand to the card on top of the played pile by number, color, or symbol.</li>
+        <li>If a player cannot play a card, they must draw one from the draw pile.</li>
+        <li> Special cards include:</li>
+        
+          <ul>
+            <li>
+              <strong>Skip:</strong> Next player loses their turn.
+              <img src="/images/cards/red_skip.png" alt="Skip Card" class="card-image">
+            </li>
+            <li>
+              <strong>Reverse:</strong> Reverses the order of play.
+              <img src="/images/cards/red_reverse.png" alt="Reverse Card" class="card-image">
+            </li>
+            <li>
+              <strong>Draw Two:</strong> Next player draws two cards and loses their turn.
+              <img src="/images/cards/red_draw_two.png" alt="Draw Two Card" class="card-image">
+            </li>
+            <li>
+              <strong>Wild:</strong> Can be played on any card to change the color.
+              <img src="/images/cards/wild_wild.png" alt="Wild Card" class="card-image">
+            </li>
+            <li>
+              <strong>Wild Draw Four:</strong> Player chooses the color and the next player draws four cards and loses their.
+              <img src="/images/cards/wild_wild_draw_four.png" alt="Wild Draw Four Card" class="card-image">
+            </li>
+          </ul>
+       
+        <li>When a player has only one card left, they must click "UNO!" before their turn ends. If caught not clicking "UNO," they must draw two cards.</li>
+        <li>The round ends when a player plays their last card.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>
