@@ -514,7 +514,6 @@ const joinGame = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    // Fetch the game details
     const game = await db.oneOrNone(
       `SELECT id, password FROM games WHERE id = $1`,
       [gameId]
@@ -525,7 +524,7 @@ const joinGame = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check password if the game is password-protected
+    // If password-protected, verify password
     if (game.password && game.password !== password) {
       res.status(403).json({ message: "Incorrect password." });
       return;
@@ -533,18 +532,24 @@ const joinGame = async (req: Request, res: Response): Promise<void> => {
 
     // Check if the user is already in the game
     const userInGame = await db.oneOrNone(
-      `SELECT * FROM game_users WHERE game_id = $1 AND users_id = $2`,
+      `SELECT seat FROM game_users WHERE game_id = $1 AND users_id = $2`,
       [gameId, userId]
     );
 
     if (!userInGame) {
-      // Add the user to the game
+      // Determine next available seat
+      const { next_seat } = await db.one<{ next_seat: number }>(
+        `SELECT COALESCE(MAX(seat), 0) + 1 AS next_seat FROM game_users WHERE game_id = $1`,
+        [gameId]
+      );
+
       await db.none(
-        `INSERT INTO game_users (game_id, users_id) VALUES ($1, $2)`,
-        [gameId, userId]
+        `INSERT INTO game_users (game_id, users_id, seat) VALUES ($1, $2, $3)`,
+        [gameId, userId, next_seat]
       );
     }
 
+    // After successful join, redirect to the lobby
     res.redirect(`/lobby/${gameId}`);
   } catch (err) {
     console.error("Error joining game:", err);
@@ -570,7 +575,6 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
   `;
 
   try {
-    // Create the game and set the creator as the current player
     const lobby = await db.one<{ id: string }>(createLobbyQuery, [
       name,
       password || null,
@@ -579,37 +583,18 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
     ]);
     const gameId = lobby.id;
 
-    // Assign the creator a seat in the game
     const assignSeatQuery = `
       INSERT INTO game_users (users_id, game_id, seat)
       VALUES ($1, $2, $3)
     `;
     await db.none(assignSeatQuery, [userId, gameId, 1]);
 
-    // Populate the game_cards table with a full deck for this game
     const populateGameCardsQuery = `
       INSERT INTO game_cards (card_id, game_id)
       SELECT id, $1 FROM cards
     `;
     await db.none(populateGameCardsQuery, [gameId]);
 
-    // Deal the initial hand (e.g., 7 cards) to the creator
-    const dealCardsQuery = `
-      WITH random_cards AS (
-        SELECT card_id
-        FROM game_cards
-        WHERE game_id = $1
-          AND user_id IS NULL
-        ORDER BY RANDOM()
-        LIMIT 7
-      )
-      UPDATE game_cards
-      SET user_id = $2
-      WHERE card_id IN (SELECT card_id FROM random_cards)
-    `;
-    await db.none(dealCardsQuery, [gameId, userId]);
-
-    // Set an initial discard card
     const initialCard = await db.one<Card>(`
       SELECT id, color, symbol
       FROM cards
@@ -627,12 +612,13 @@ const createGame = async (req: Request, res: Response): Promise<void> => {
       [initialCard.id, initialCard.color, gameId]
     );
 
-    res.redirect(`/game/${gameId}`);
+    res.redirect(`/lobby/${gameId}`);
   } catch (err) {
     console.error("Error creating game:", err);
     res.status(500).send("Internal server error.");
   }
 };
+
 
 // Get the games that the user is part of
 const getMyGames = async (req: Request, res: Response): Promise<void> => {
@@ -670,18 +656,54 @@ const startGame = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    // Mark the game as active in the database
+    // Check if game is already active
+    const { active } = await db.one<{ active: boolean }>(
+      `SELECT active FROM games WHERE id = $1`,
+      [gameId]
+    );
+    if (active) {
+       res.status(400).send("Game is already active. Cannot deal cards again.");
+       return;
+    }
+
+    // Mark the game as active
     await db.none("UPDATE games SET active = TRUE WHERE id = $1", [gameId]);
 
-    // Emit the "game-start" event to all clients in the room
-    req.app.get("io").to(gameId.toString()).emit("game-start", { gameId });
+    // Deal initial cards (7 cards each) to every player
+    const players = await db.any<{ users_id: number }>(
+      `SELECT users_id FROM game_users WHERE game_id = $1 ORDER BY seat`,
+      [gameId]
+    );
 
+    for (const player of players) {
+      await db.none(
+        `
+        WITH random_cards AS (
+          SELECT card_id
+          FROM game_cards
+          WHERE game_id = $1
+            AND user_id IS NULL
+          ORDER BY RANDOM()
+          LIMIT 7
+        )
+        UPDATE game_cards
+        SET user_id = $2
+        WHERE card_id IN (SELECT card_id FROM random_cards)
+        `,
+        [gameId, player.users_id]
+      );
+    }
+
+    // Emit "game-start" event
+    req.app.get("io").to(gameId.toString()).emit("game-start", { gameId });
     res.status(200).json({ message: "Game started successfully." });
   } catch (err) {
     console.error("Error starting game:", err);
     res.status(500).send("Internal server error.");
   }
 };
+
+
 
 const abandonGame = async (req: Request, res: Response): Promise<void> => {
   const { id: gameId } = req.params;

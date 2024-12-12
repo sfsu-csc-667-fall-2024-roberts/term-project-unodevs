@@ -48,7 +48,6 @@ const getLobby = async (req: Request, res: Response): Promise<void> => {
   const getLobbyQuery = `
     SELECT g.id, g.name, g.active
     FROM games g
-    LEFT JOIN game_users gu ON g.id = gu.game_id
     WHERE g.id = $1
       AND EXISTS (
         SELECT game_id

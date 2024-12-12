@@ -82,38 +82,25 @@
   <body>
     <h1><%= gameName %></h1>
 
-    <!-- Navigation Links -->
-    <div class="centered-links">
-      <a href="/home"><button>Homepage</button></a>
-      <a href="/rules"><button>Rules</button></a>
-      <a href="/game"><button>Game Page</button></a>
-      <% if (!loggedIn) { %>
-      <a href="/signin"><button>Sign In</button></a>
-      <a href="/signup"><button>Sign Up</button></a>
-      <% } else { %>
-      <a href="/logout"><button>Logout</button></a>
-      <% } %>
-    </div>
-
-    <!-- Opponent Display -->
     <div class="players-container">
-      <% playerList.forEach((player) => { %>
-      <div class="opponent-container" id="opponent-<%= player.id %>">
-        <p class="opponent-name"><%= player.name %></p>
-        <div class="opponent-container-bottom">
-          <img src="/images/cards/uno_back.png" alt="back of uno card" />
-          <p class="opponent-hand-size" id="hand-<%= player.id %>">
-            <%= player.handcount + "X" %>
-          </p>
-        </div>
-      </div>
-      <% }); %>
+      <% playerList.forEach((player) => {
+        if (player.id !== parseInt(clientId)) { %>
+          <div class="opponent-container" id="opponent-<%= player.id %>">
+            <p class="opponent-name"><%= player.name %></p>
+            <div class="opponent-container-bottom">
+              <img src="/images/cards/uno_back.png" alt="back of uno card" />
+              <p class="opponent-hand-size" id="hand-<%= player.id %>">
+                <%= player.handSize + "Cards" %>
+              </p>
+            </div>
+          </div>
+      <% } }); %>
     </div>
 
     <!-- Main Game Area -->
     <main>
       <div id="winner-div" class="hidden">
-        <h1 id="winner-header"><!-- Winner's username will be injected here --></h1>
+        <h1 id="winner-header"></h1>
         <button id="return-home-button">Return to Lobby</button>
       </div>
       <div id="main-left">
@@ -132,9 +119,11 @@
           </div>
         </div>
         <div class="game-buttons">
-          <button id="draw-button" type="submit" name="draw" value="draw">Draw</button>
-          <button id="uno-button" type="submit" name="uno" value="uno">Uno</button>
-          <button id="play-button" name="play-button">Play</button>
+          <% if (String(activePlayerId) === String(clientId)) { %>
+            <button id="draw-button" type="submit" name="draw" value="draw">Draw</button>
+            <button id="uno-button" type="submit" name="uno" value="uno">Uno</button>
+            <button id="play-button" name="play-button">Play</button>
+          <% } %>
         </div>
       </div>
       <%- include('partials/chat', { chatMessages: messages, roomId: gameId }) %>

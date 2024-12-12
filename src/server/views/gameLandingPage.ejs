@@ -7,7 +7,6 @@
     <script src="/scripts/homepage.js" defer></script>
 </head>
 <body>
-    <!-- Navigation Links -->
     <div class="centered-links">
         <a href="/home"><button>Homepage</button></a>
         <a href="/rules"><button>Rules</button></a>
@@ -32,10 +31,17 @@
             <div class="game-entry">
                 <p>Game: <%= lobby.name %></p>
                 <p>Game ID: <%= lobby.id %></p>
-                <p><%= lobby.has_password ? "Private" : "Public" %></p>
-                <a href="/lobby/<%= lobby.id %>">
-                    <button class="join-game-button">Join Lobby</button>
-                </a>
+                <p><%= lobby.has_password ? "Private (Password Required)" : "Public" %></p>
+                <% if (lobby.has_password) { %>
+                    <form action="/game/<%= lobby.id %>/join" method="POST">
+                        <input type="password" name="password" placeholder="Enter game password" required>
+                        <button class="join-game-button" type="submit">Join Lobby</button>
+                    </form>
+                <% } else { %>
+                    <form action="/game/<%= lobby.id %>/join" method="POST">
+                        <button class="join-game-button" type="submit">Join Lobby</button>
+                    </form>
+                <% } %>
             </div>
             <% }); %>
         </div>
