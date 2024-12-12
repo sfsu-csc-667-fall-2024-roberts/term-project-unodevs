@@ -456,12 +456,14 @@ const getGame = async (req: Request, res: Response): Promise<void> => {
     // Fetch player list and their hand sizes
     const playerList = await db.any<Player>(
       `
-      SELECT u.id, u.username AS name, COUNT(gc.card_id) AS handSize
+      SELECT u.id, u.username AS name, COUNT(gc.card_id) AS "handSize"
       FROM users u
-      JOIN game_cards gc ON u.id = gc.user_id
-      WHERE gc.game_id = $1 AND gc.discarded = false
+      LEFT JOIN game_cards gc ON u.id = gc.user_id 
+        AND gc.game_id = $1 
+        AND gc.discarded = false
       GROUP BY u.id, u.username
-      ORDER BY u.id
+      ORDER BY u.id;
+      
       `,
       [gameId]
     );
@@ -703,8 +705,6 @@ const startGame = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-
 const abandonGame = async (req: Request, res: Response): Promise<void> => {
   const { id: gameId } = req.params;
   const userId = req.session?.user?.id;
@@ -715,10 +715,18 @@ const abandonGame = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    console.log(`User ${userId} left the game ${gameId}.`);
-    res.status(200).send("Game left successfully."); 
+    // Delete all references to this game from relevant tables
+    await db.none(
+      `DELETE FROM game_users WHERE game_id = $1;
+       DELETE FROM game_cards WHERE game_id = $1;
+       DELETE FROM games WHERE id = $1;`,
+      [gameId]
+    );
+
+    console.log(`User ${userId} ended and deleted the game ${gameId}.`);
+    res.status(200).send("Game ended and deleted successfully.");
   } catch (error) {
-    console.error("Error leaving game:", error);
+    console.error("Error ending the game:", error);
     res.status(500).send("Internal server error.");
   }
 };

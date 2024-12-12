@@ -115,6 +115,10 @@ main {
     transform: scale(1.1);
 }
 
+.hidden {
+    display: none;
+  }  
+
 /* Client Hand */
 .client-hand {
     display: flex;

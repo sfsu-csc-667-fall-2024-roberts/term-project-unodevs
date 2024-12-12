@@ -8,7 +8,6 @@
     <script src="/scripts/chat.js" defer></script>
     <script src="/scripts/game.js" defer></script>
     <style>
-      /* Adjusting sizes for players, cards, and containers */
       .players-container {
         display: flex;
         flex-direction: row;
@@ -69,7 +68,7 @@
         align-items: center;
         margin: 2rem;
         position: relative;
-        top: -50px; /* Move the game area up to avoid overlap with the yellow box */
+        top: -50px;
       }
 
       .deck-container img,
@@ -82,6 +81,7 @@
   <body>
     <h1><%= gameName %></h1>
 
+    <!-- Opponent Display -->
     <div class="players-container">
       <% playerList.forEach((player) => {
         if (player.id !== parseInt(clientId)) { %>
@@ -90,14 +90,13 @@
             <div class="opponent-container-bottom">
               <img src="/images/cards/uno_back.png" alt="back of uno card" />
               <p class="opponent-hand-size" id="hand-<%= player.id %>">
-                <%= player.handSize + "Cards" %>
+                <%= player.handSize + " Cards" %>
               </p>
             </div>
           </div>
       <% } }); %>
     </div>
 
-    <!-- Main Game Area -->
     <main>
       <div id="winner-div" class="hidden">
         <h1 id="winner-header"></h1>
@@ -120,16 +119,15 @@
         </div>
         <div class="game-buttons">
           <% if (String(activePlayerId) === String(clientId)) { %>
-            <button id="draw-button" type="submit" name="draw" value="draw">Draw</button>
-            <button id="uno-button" type="submit" name="uno" value="uno">Uno</button>
-            <button id="play-button" name="play-button">Play</button>
+            <button id="draw-button" type="submit">Draw</button>
+            <button id="uno-button" type="submit">Uno</button>
+            <button id="play-button">Play</button>
           <% } %>
         </div>
       </div>
       <%- include('partials/chat', { chatMessages: messages, roomId: gameId }) %>
     </main>
 
-    <!-- Client Hand -->
     <div class="client-hand">
       <% clientHand.forEach((card) => { %>
       <img
@@ -144,7 +142,6 @@
       <% }); %>
     </div>
 
-    <!-- Hidden Fields -->
     <input type="hidden" name="room-id" id="game-id" value="<%= gameId %>" />
     <input type="hidden" name="client-id" id="client-id" value="<%= clientId %>" />
     <input type="hidden" name="active-player-id" id="active-player-id" value="<%= activePlayerId %>" />

@@ -1,4 +1,4 @@
-import { io } from "https://cdn.skypack.dev/socket.io-client"; 
+import { io } from "https://cdn.skypack.dev/socket.io-client";
 
 let selectedId;
 let selectedCardId;
@@ -6,19 +6,16 @@ const gameId = Number(document.getElementById("game-id").value);
 const clientId = Number(document.getElementById("client-id").value);
 const activePlayerIdInput = document.getElementById("active-player-id");
 
-// Function to determine if a card can be legally played
+// Determine legality of move
 const isLegalMove = (card) => {
   if (card.color === "wild") return true;
   const discardCard = document.getElementById("discard-card");
   const color = discardCard.getAttribute("card-color");
   const symbol = discardCard.getAttribute("card-symbol");
-  console.log(
-    `Discard card color: ${color}, symbol: ${symbol}, card color: ${card.color}, symbol: ${card.symbol}`
-  );
   return card.color === color || card.symbol === symbol;
 };
 
-// Function to update visibility of buttons based on whose turn it is
+// Update button visibility based on whose turn it is
 function updateButtonsVisibility(activePlayerId) {
   const drawButton = document.getElementById("draw-button");
   const playButton = document.getElementById("play-button");
@@ -37,13 +34,25 @@ function updateButtonsVisibility(activePlayerId) {
   }
 }
 
+// Update opponent hand counts using server data
+function updateHandCounts(updatedHandCounts) {
+  if (!updatedHandCounts) return;
+  for (const [id, count] of Object.entries(updatedHandCounts)) {
+    if (Number(id) !== clientId) {
+      const playerHandCount = document.getElementById(`hand-${id}`);
+      if (playerHandCount) {
+        playerHandCount.innerText = count + "X";
+      }
+    }
+  }
+}
+
 // Initialize Socket.io
 const socket = io({ query: { id: gameId } });
 
-// Initially set button visibility based on current active player
+// Initially set button visibility
 updateButtonsVisibility(activePlayerIdInput.value);
 
-// Card click event handler
 const handleCardClick = (event) => {
   selectedId = event.target.getAttribute("id");
   const secondHalfOfId = selectedId.split("-")[1];
@@ -54,7 +63,6 @@ const handleCardClick = (event) => {
   event.target.classList.toggle("selected");
 };
 
-// Listen for "card-played" event
 socket.on("card-played", (data) => {
   const client = document.getElementsByClassName("client-hand")[0];
   const newSrc = `/images/cards/${data.color}_${data.symbol}.png`;
@@ -63,20 +71,15 @@ socket.on("card-played", (data) => {
   activeCard.setAttribute("card-color", data.color);
   activeCard.setAttribute("card-symbol", data.symbol);
 
-  console.log("Card played event data:", JSON.stringify(data));
-
   if (clientId === Number(data.clientId)) {
     const cardToRemove = document.getElementById(`game#${gameId}-card#${data.cardId}`);
     if (cardToRemove) cardToRemove.remove();
     client.style.border = "none";
   } else {
-    const playerHandCount = document.getElementById(`hand-${data.clientId}`);
-    playerHandCount.innerText =
-      Number(playerHandCount.innerText.slice(0, -1)) - 1 + "X";
-    document.getElementById(`opponent-${data.clientId}`).style.border = "none";
+    // Update opponent's hand count directly from updatedHandCounts
   }
 
-  // Highlight the current player’s turn
+  // Highlight current player
   if (clientId === Number(data.activePlayerId)) {
     client.style.border = "black solid 10px";
   } else {
@@ -84,12 +87,12 @@ socket.on("card-played", (data) => {
     if (opponentElement) opponentElement.style.border = "yellow solid 3px";
   }
 
-  // Update active player and button visibility
+  // Update counts and buttons
   activePlayerIdInput.value = data.activePlayerId;
   updateButtonsVisibility(data.activePlayerId);
+  updateHandCounts(data.updatedHandCounts);
 });
 
-// Listen for "card-drawn" event
 socket.on("card-drawn", (data) => {
   const client = document.getElementsByClassName("client-hand")[0];
   if (clientId === Number(data.clientId)) {
@@ -102,11 +105,6 @@ socket.on("card-drawn", (data) => {
     newCard.addEventListener("click", handleCardClick);
     client.appendChild(newCard);
     client.style.border = "none";
-  } else {
-    const playerHandCount = document.getElementById(`hand-${data.clientId}`);
-    playerHandCount.innerText =
-      Number(playerHandCount.innerText.slice(0, -1)) + 1 + "X";
-    document.getElementById(`opponent-${data.clientId}`).style.border = "none";
   }
 
   if (clientId === Number(data.activePlayerId)) {
@@ -116,12 +114,11 @@ socket.on("card-drawn", (data) => {
     if (opponentElement) opponentElement.style.border = "yellow solid 3px";
   }
 
-  // Update active player and button visibility
   activePlayerIdInput.value = data.activePlayerId;
   updateButtonsVisibility(data.activePlayerId);
+  updateHandCounts(data.updatedHandCounts);
 });
 
-// Listen for "cards-drawn" event (for draw_two or wild_draw_four scenarios)
 socket.on("cards-drawn", (data) => {
   if (clientId === Number(data.currentPlayerId)) {
     const client = document.getElementsByClassName("client-hand")[0];
@@ -135,18 +132,13 @@ socket.on("cards-drawn", (data) => {
       newCard.addEventListener("click", handleCardClick);
       client.appendChild(newCard);
     });
-  } else {
-    const playerHandCount = document.getElementById(`hand-${data.currentPlayerId}`);
-    playerHandCount.innerText =
-      Number(playerHandCount.innerText.slice(0, -1)) + data.cards.length + "X";
   }
 
-  // Update active player and button visibility
   activePlayerIdInput.value = data.activePlayerId;
   updateButtonsVisibility(data.activePlayerId);
+  updateHandCounts(data.updatedHandCounts);
 });
 
-// Listen for "is-win" event
 socket.on("is-win", (data) => {
   const winnerName = data.winnerName;
   document.getElementById("winner-header").innerText = `${winnerName} won!`;
@@ -159,7 +151,6 @@ for (let i = 0; i < hand.length; i++) {
   hand.item(i).addEventListener("click", handleCardClick);
 }
 
-// Play button functionality
 const playButton = document.getElementById("play-button");
 if (playButton) {
   playButton.addEventListener("click", async (event) => {
@@ -180,7 +171,7 @@ if (playButton) {
 
     if (selectedCard.color === "wild") {
       cardColor = prompt("Choose a color: red, blue, green, or yellow");
-      if (!cardColor) return; // If user cancels prompt
+      if (!cardColor) return;
     }
 
     try {
@@ -199,7 +190,6 @@ if (playButton) {
   });
 }
 
-// Draw button functionality
 const drawButton = document.getElementById("draw-button");
 if (drawButton) {
   drawButton.addEventListener("click", async () => {
@@ -213,11 +203,21 @@ if (drawButton) {
   });
 }
 
-// Return home button
 const returnHomeButton = document.getElementById("return-home-button");
 if (returnHomeButton) {
-  returnHomeButton.addEventListener("click", () => {
-    alert("TODO: Delete game");
-    window.location.href = "/";
+  returnHomeButton.addEventListener("click", async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/game/${gameId}/abandon`, {
+        method: "POST"
+      });
+
+      if (res.ok) {
+        window.location.href = "/home"; // Redirect after successful deletion
+      } else {
+        alert("Error ending the game. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error ending the game:", error);
+    }
   });
 }
