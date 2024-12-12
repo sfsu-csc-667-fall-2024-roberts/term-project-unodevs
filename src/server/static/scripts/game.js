@@ -81,7 +81,7 @@ socket.on("card-played", (data) => {
     client.style.border = "black solid 10px";
   } else {
     const opponentElement = document.getElementById(`opponent-${data.activePlayerId}`);
-    if (opponentElement) opponentElement.style.border = "yellow solid 3px";
+    if (opponentElement) opponentElement.style.border = "red solid 3px";
   }
 
   // Update counts and buttons
@@ -108,7 +108,7 @@ socket.on("card-drawn", (data) => {
     client.style.border = "black solid 10px";
   } else {
     const opponentElement = document.getElementById(`opponent-${data.activePlayerId}`);
-    if (opponentElement) opponentElement.style.border = "yellow solid 3px";
+    if (opponentElement) opponentElement.style.border = "red solid 3px";
   }
 
   activePlayerIdInput.value = data.activePlayerId;
