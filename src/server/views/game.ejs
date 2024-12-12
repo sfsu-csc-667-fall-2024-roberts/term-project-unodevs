@@ -2,81 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Uno Game</title>
     <link rel="stylesheet" href="/Stylesheets/game.css" />
     <script src="/scripts/chat.js" defer></script>
     <script src="/scripts/game.js" defer></script>
-    <style>
-      .players-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        border: 2px solid black;
-        background-color: blue;
-        width: 100%;
-        text-align: center;
-        padding: 1rem;
-      }
-
-      .opponent-container {
-        display: flex;
-        flex-direction: column;
-        border: 2px solid black;
-        text-align: center;
-        height: auto;
-        width: 15%;
-        background-color: red;
-        margin: 0.5rem;
-      }
-
-      .opponent-container:nth-child(even) {
-        background-color: yellow;
-      }
-
-      .opponent-container > p.opponent-name {
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .opponent-container img {
-        height: 80px;
-        width: 40px;
-      }
-
-      .client-hand {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        position: absolute;
-        height: 20%;
-        bottom: 0;
-        width: 100%;
-        background-color: yellow;
-        padding: 1rem;
-      }
-
-      .client-hand img.hand-card {
-        height: 80px;
-        width: 50px;
-      }
-
-      .game-area {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin: 2rem;
-        position: relative;
-        top: -50px;
-      }
-
-      .deck-container img,
-      .discard-container img {
-        height: 100px;
-        width: 70px;
-      }
-    </style>
   </head>
   <body>
     <h1><%= gameName %></h1>
@@ -97,47 +27,57 @@
       <% } }); %>
     </div>
 
-    <main>
-      <div id="winner-div" class="hidden">
-        <h1 id="winner-header"></h1>
-        <button id="return-home-button">Return to Lobby</button>
-      </div>
-      <div id="main-left">
-        <div class="deck-and-discard">
-          <div class="deck-container">
-            <img src="/images/cards/uno_back.png" alt="back of uno card" />
+    <!-- Main Content Container -->
+    <div class="content-container">
+      <!-- Main Game Area -->
+      <main class="game-main">
+        <div id="winner-div" class="hidden">
+          <h1 id="winner-header"></h1>
+          <button id="return-home-button">Return to Lobby</button>
+        </div>
+        
+        <div id="main-left">
+          <div class="deck-and-discard">
+            <div class="deck-container">
+              <img src="/images/cards/uno_back.png" alt="back of uno card" />
+            </div>
+            <div class="discard-container">
+              <img
+                id="discard-card"
+                src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>"
+                alt="<%= discardCard.color + ' ' + discardCard.symbol %>"
+                card-color="<%= discardCard.color %>"
+                card-symbol="<%= discardCard.symbol %>"
+              />
+            </div>
           </div>
-          <div class="discard-container">
-            <img
-              id="discard-card"
-              src="<%= '/images/cards/' + discardCard.color + '_' + discardCard.symbol + '.png' %>"
-              alt="<%= discardCard.color + ' ' + discardCard.symbol %>"
-              card-color="<%= discardCard.color %>"
-              card-symbol="<%= discardCard.symbol %>"
-            />
+          <div class="game-buttons">
+            <% if (String(activePlayerId) === String(clientId)) { %>
+              <button id="draw-button" type="submit">Draw</button>
+              <button id="play-button">Play</button>
+            <% } %>
           </div>
         </div>
-        <div class="game-buttons">
-          <% if (String(activePlayerId) === String(clientId)) { %>
-            <button id="draw-button" type="submit">Draw</button>
-            <button id="play-button">Play</button>
-          <% } %>
-        </div>
-      </div>
-      <%- include('partials/chat', { chatMessages: messages, roomId: gameId }) %>
-    </main>
+      </main>
 
+      <!-- Chat Container on the Right -->
+      <div class="chat-container">
+        <%- include('partials/chat', { chatMessages: messages, roomId: gameId }) %>
+      </div>
+    </div>
+
+    <!-- Client Hand (at the bottom) -->
     <div class="client-hand">
       <% clientHand.forEach((card) => { %>
-      <img
-        class="hand-card"
-        cardId="<%= card.id %>"
-        id="<%= 'game#' + gameId + '-card#' + card.id %>"
-        src="<%= '/images/cards/' + card.color + '_' + card.symbol + '.png' %>"
-        alt="<%= card.color + ' ' + card.symbol %>"
-        card-color="<%= card.color %>"
-        card-symbol="<%= card.symbol %>"
-      />
+        <img
+          class="hand-card"
+          cardId="<%= card.id %>"
+          id="<%= 'game#' + gameId + '-card#' + card.id %>"
+          src="<%= '/images/cards/' + card.color + '_' + card.symbol + '.png' %>"
+          alt="<%= card.color + ' ' + card.symbol %>"
+          card-color="<%= card.color %>"
+          card-symbol="<%= card.symbol %>"
+        />
       <% }); %>
     </div>
 

@@ -19,18 +19,15 @@ const isLegalMove = (card) => {
 function updateButtonsVisibility(activePlayerId) {
   const drawButton = document.getElementById("draw-button");
   const playButton = document.getElementById("play-button");
-  const unoButton = document.getElementById("uno-button");
 
-  if (!drawButton || !playButton || !unoButton) return;
+  if (!drawButton || !playButton) return;
 
   if (Number(activePlayerId) === clientId) {
     drawButton.style.display = "inline-block";
     playButton.style.display = "inline-block";
-    unoButton.style.display = "inline-block";
   } else {
     drawButton.style.display = "none";
     playButton.style.display = "none";
-    unoButton.style.display = "none";
   }
 }
 

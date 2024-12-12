@@ -1,34 +1,43 @@
-/* General body styling */
-body {
+/* General styling */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
     font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: 100vw;
     height: 100vh;
-    margin: 0;
-    background-color: #ffffff; /* Fallback color */
-    position: relative;
-}
-
-
-/* Header */
-h1 {
+    background-color: #ffffff; /* fallback color */
+  }
+  
+  /* Hidden Class */
+  .hidden {
+    display: none;
+  }
+  
+  /* Header / Title */
+  .game-title,
+  h1 {
     text-align: center;
     margin: 1rem 0;
     color: #ee161f;
-}
-
-/* Navigation Links */
-.centered-links {
+    font-size: 2rem;
+    font-weight: normal;
+  }
+  
+  /* Navigation Links */
+  .centered-links {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 2rem auto;
-}
-
-.centered-links button {
+  }
+  
+  .centered-links button {
     background: #ee161f;
     color: white;
     font-weight: bold;
@@ -37,70 +46,121 @@ h1 {
     border-radius: 0.5rem;
     cursor: pointer;
     transition: all 0.15s ease-in-out;
-}
-
-.centered-links button:hover {
+  }
+  
+  .centered-links button:hover {
     transform: scale(1.15);
-}
-
-/* Players Container */
-.players-container {
+  }
+  
+  /* Players Section */
+  .players-container {
     display: flex;
-    flex-direction: row;
     justify-content: space-evenly;
-    border: 3px solid black;
-    background-color: blue;
     width: 100%;
+    margin: 1rem 0;
     text-align: center;
-}
-
-.opponent-container {
+    background-color: #ffe4e1; /* As per original styling */
+    border: 3px solid #ee161f;
+  }
+  
+  .opponent-container {
     display: flex;
-    flex-direction: column;
-    border: 3px solid black;
-    text-align: center;
-    height: 100%;
-    width: 20%;
-    background-color: red;
-}
-
-.opponent-container:nth-child(even) {
-    background-color: yellow;
-}
-
-.opponent-container > p.opponent-name {
-    font-size: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #ffe4e1;
+    border: 2px solid #ee161f;
+    border-radius: 8px;
+    width: 100%;
+  }
+  
+  .opponent-container:nth-child(even) {
+    background-color:#ee161f;
+  }
+  
+  .opponent-name {
+    font-size: 1rem;
     font-weight: bold;
-}
-
-.opponent-container img {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Keep the large font for specific elements */
+  .opponent-container > p.opponent-name {
+    font-size: 30px;
+  }
+  
+  .opponent-container img {
     height: 120px;
     width: 60px;
-}
-
-.opponent-container-bottom {
+  }
+  
+  .opponent-container-bottom {
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: 100%;
-}
-
-/* Main Game Section */
-main {
-    height: 30%;
+  }
+  
+  /* Main Content Area - now we create a container to hold the game and the chat side by side */
+  .content-container {
     display: flex;
-    flex-direction: row;
-    margin: 10%;
+    flex: 1;
+    width: 100%;
+    position: relative;
+    /* Align items at the top, so the game and chat sit next to each other */
+    align-items: flex-start;
+    justify-content: center; /* This helps center the main area horizontally */
+  }
+  
+  /* Main Game Area */
+  .game-main,
+  main {
+    flex: 1; /* Takes up remaining space */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center played cards and related elements horizontally */
+    justify-content: flex-start;
+    margin: 1rem 0;
+  }
+  
+  /* Deck, Discard, and Buttons Section */
+  .deck-and-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-}
-
-.deck-container img,
-.discard-container img {
+    margin-top: 2rem;
+  }
+  
+  .deck-and-discard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .deck-container img,
+  .discard-container img {
+    height: 120px;
+    width: 80px;
+    margin: 0 10px;
+  }
+  
+  main .deck-container img,
+  main .discard-container img {
     height: 150px;
     width: 100px;
-}
-
-.game-buttons button {
+  }
+  
+  /* Game Buttons */
+  .game-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .game-buttons button {
     background: #ee161f;
     color: white;
     font-weight: bold;
@@ -109,28 +169,68 @@ main {
     border-radius: 0.5rem;
     cursor: pointer;
     margin: 0 0.5rem;
-}
+    transition: transform 0.2s ease-in-out;
+  }
 
-.game-buttons button:hover {
-    transform: scale(1.1);
-}
 
-.hidden {
-    display: none;
-  }  
-
-/* Client Hand */
-.client-hand {
+  
+  .game-buttons button:hover {
+    transform: scale(1.15);
+  }
+  
+  #return-home-button {
+    background-color: #ee161f;
+    color: #fff; /* Ensures text is visible against the red background */
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  #return-home-button:hover {
+    transform: scale(1.15);
+  }
+  
+  
+  /* Chat Container - placed on the right side */
+  .chat-container {
+    width: 25%;
+    margin: 1rem;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #ffe4e1;
+    overflow-y: auto;
+    max-height: 60vh;
+  }
+  
+  /* Client Hand */
+  .client-hand {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    position: absolute;
-    height: 30%;
-    bottom: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #ffe4e1;
+    border: 2px solid #ee161f;
+    border-radius: 8px;
     width: 100%;
-    background-color: yellow;
-}
-
-.client-hand img.selected {
-    border: 3px solid green;
-}
+  }
+  
+  .client-hand img {
+    margin: 0.5rem;
+    height: 100px;
+    width: 70px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .client-hand img:hover {
+    transform: scale(1.1);
+  }
+  
+  .client-hand img.selected {
+    border: 3px solid red;
+  }
+  
