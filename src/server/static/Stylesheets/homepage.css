@@ -184,3 +184,26 @@ button.send-message:hover {
   font-size: 20px;
   font-weight: bold;
 }
+
+/* Style for welcome messages */
+#welcome-messages {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #333;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+#welcome-messages p {
+  margin: 0.5rem 0;
+}
+
+#welcome-messages a {
+  color: #ee161f;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#welcome-messages a:hover {
+  text-decoration: underline;
+}
