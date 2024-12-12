@@ -32,6 +32,6 @@ const handler = (req: Request, res: Response): void => {
 };
 
 router.post("/:id", handler);
-router.post("/:id/chat", handler);
+//router.post("/:id/chat", handler);
 
 export default router;

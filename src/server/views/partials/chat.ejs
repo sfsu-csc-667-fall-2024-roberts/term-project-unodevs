@@ -1,7 +1,70 @@
+<style>
+  /* Style the send message button to match lobby.css */
+  #send-message-button {
+    background: #ee161f; /* Red color from lobby.css */
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem; /* Consistent padding */
+    border-radius: 0.5rem; /* Rounded corners */
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, 
+                rgba(0, 0, 0, 0.24) 0px 1px 2px; /* Subtle shadow */
+    transition: all 0.15s ease-in-out;
+  }
+
+  #send-message-button:hover {
+    transform: scale(1.15); /* Slightly enlarges on hover */
+  }
+
+  /* Additional styling to integrate chat container with lobby.css */
+  #chat-container {
+    width: 60%; /* Matches lobby.css proportions */
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.5rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 1rem;
+    margin: 2rem auto;
+    font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; /* Lobby font */
+  }
+
+  #chat-messages {
+    max-height: 300px; /* Scrollable */
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    border-radius: 0.5rem; /* Matches overall styling */
+  }
+
+  .chat-message {
+    background: #f1f1f1;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.9rem; /* Readable font size */
+    color: #333; /* Dark text for contrast */
+  }
+
+  #message {
+    flex: 1;
+    outline: none;
+    border: 1px solid #e5e5e5;
+    padding: 0.5rem;
+    border-radius: 0.5rem; /* Matches button styling */
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
+                rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    margin-right: 0.5rem;
+  }
+</style>
+
+
 <input type="hidden" name="room-id" id="room-id" value="<%= roomId %>" />
 
 <div id="chat-container">
-  <div id="chat-messages">
+  <div id="chat-messages" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;">
     <% (chatMessages?.length > 0) ? chatMessages.forEach(message => { %>
     <p class="chat-message">
       <%= message %>
@@ -20,6 +83,40 @@
 </div>
 
 <script>
+  const chatMessagesContainer = document.getElementById("chat-messages");
+
+  function scrollToBottom() {
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+  }
+
+  function sendMessage() {
+    const roomId = document.querySelector("#room-id").value;
+    const message = document.querySelector("#message").value;
+
+    if (message.trim() !== "") {
+      fetch(`/chat/${roomId}`, {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      })
+      .then((response) => {
+        if (response.ok) {
+          // Clear the input field only on successful server update
+          document.querySelector("#message").value = "";
+        } else {
+          console.error("Failed to send message");
+        }
+      })
+      .catch((error) => {
+        console.error("Error sending message:", error);
+      });
+    }
+  }
+
+  // Auto-scroll to the bottom on page load
+  scrollToBottom();
+
+  // Send message on Enter key press
   const chatInput = document.querySelector("#message");
   chatInput.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
@@ -27,32 +124,4 @@
       document.querySelector("#send-message-button").click();
     }
   });
-
-
-
-  //Step 1 Chat: POST message to chat route
-  function sendMessage() {
-    const roomId = document.querySelector("#room-id").value;
-    console.log(roomId);
-    let message = document.querySelector("#message").value;
-    console.log(document.location.pathname);
-
-    if (document.location.pathname == "/") {
-      fetch(`/chat/${roomId}`, {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
-    } else {
-      fetch(`${document.location.pathname}/chat/`, {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
-    }
-
-    document.querySelector("#message").value = "";
-  }
-
-
 </script>
