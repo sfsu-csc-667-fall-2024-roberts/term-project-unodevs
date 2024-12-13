@@ -5,7 +5,6 @@ const roomId = document.querySelector("#room-id").value;
 
 const chatSocket = io();
 
-//Step 3 Chat: Listen for Socket IO Event and do something with message
 chatSocket.on(
   `chat:message:${roomId}`,
   ({ hash, from, timestamp, message }) => {
