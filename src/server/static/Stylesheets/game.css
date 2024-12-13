@@ -7,11 +7,11 @@ html, body {
   
   body {
     font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
     width: 100vw;
     height: 100vh;
     background-color: #ffffff; /* fallback color */
+    overflow: hidden;
+    position: relative; /* Important for absolute positioning of elements */
   }
   
   /* Hidden Class */
@@ -19,8 +19,7 @@ html, body {
     display: none;
   }
   
-  /* Header / Title */
-  .game-title,
+  /* Title */
   h1 {
     text-align: center;
     margin: 1rem 0;
@@ -29,108 +28,70 @@ html, body {
     font-weight: normal;
   }
   
-  /* Navigation Links */
-  .centered-links {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2rem auto;
-  }
-  
-  .centered-links button {
-    background: #ee161f;
-    color: white;
-    font-weight: bold;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.15s ease-in-out;
-  }
-  
-  .centered-links button:hover {
-    transform: scale(1.15);
-  }
-  
-  /* Players Section */
+  /* Opponent Container - positioned at top center */
   .players-container {
+    position: absolute;
+    top: 80px; /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-    margin: 1rem 0;
-    text-align: center;
-    background-color: #ffe4e1; /* As per original styling */
+    flex-wrap: wrap; /* Allow wrapping to avoid horizontal scroll */
+    justify-content: center;
+    background-color: #ffe4e1;
     border: 3px solid #ee161f;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 60vw; /* Limit width so it doesn't approach the chat area */
+    margin: 0 auto;
   }
   
   .opponent-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 1rem 0;
-    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem;
     background-color: #ffe4e1;
-    border: 2px solid #ee161f;
     border-radius: 8px;
-    width: 100%;
-  }
-  
-  .opponent-container:nth-child(even) {
-    background-color:#ee161f;
+    padding: 1rem;
   }
   
   .opponent-name {
-    font-size: 1rem;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 0.5rem;
-  }
-  
-  /* Keep the large font for specific elements */
-  .opponent-container > p.opponent-name {
-    font-size: 30px;
-  }
-  
-  .opponent-container img {
-    height: 120px;
-    width: 60px;
   }
   
   .opponent-container-bottom {
     display: flex;
     flex-direction: row;
+    align-items: center;
+  }
+  
+  .opponent-container img {
+    height: 120px;
+    width: 60px;
+    margin-right: 0.5rem;
+  }
+  
+  /* Main Content Container - centered for discard/deck/buttons */
+  .content-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: flex-start; 
     justify-content: center;
     width: 100%;
+    max-width: 1200px; /* Adjust as needed */
   }
   
-  /* Main Content Area - now we create a container to hold the game and the chat side by side */
-  .content-container {
-    display: flex;
-    flex: 1;
-    width: 100%;
-    position: relative;
-    /* Align items at the top, so the game and chat sit next to each other */
-    align-items: flex-start;
-    justify-content: center; /* This helps center the main area horizontally */
-  }
-  
-  /* Main Game Area */
-  .game-main,
-  main {
-    flex: 1; /* Takes up remaining space */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center played cards and related elements horizontally */
-    justify-content: flex-start;
-    margin: 1rem 0;
-  }
-  
-  /* Deck, Discard, and Buttons Section */
-  .deck-and-buttons-container {
+  /* Game Main Area */
+  .game-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 2rem;
   }
   
   .deck-and-discard {
@@ -142,18 +103,12 @@ html, body {
   
   .deck-container img,
   .discard-container img {
-    height: 120px;
-    width: 80px;
+    height: 150px;
+    width: 100px;
     margin: 0 10px;
   }
   
-  main .deck-container img,
-  main .discard-container img {
-    height: 150px;
-    width: 100px;
-  }
-  
-  /* Game Buttons */
+  /* Game Buttons (Draw, Play) */
   .game-buttons {
     display: flex;
     justify-content: center;
@@ -171,8 +126,6 @@ html, body {
     margin: 0 0.5rem;
     transition: transform 0.2s ease-in-out;
   }
-
-
   
   .game-buttons button:hover {
     transform: scale(1.15);
@@ -180,7 +133,7 @@ html, body {
   
   #return-home-button {
     background-color: #ee161f;
-    color: #fff; /* Ensures text is visible against the red background */
+    color: #fff;
     font-weight: bold;
     border: none;
     padding: 0.5rem 1rem;
@@ -193,30 +146,36 @@ html, body {
     transform: scale(1.15);
   }
   
-  
-  /* Chat Container - placed on the right side */
+  /* Chat Container - right side */
   .chat-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
     width: 25%;
-    margin: 1rem;
-    border: 2px solid #000;
+    max-height: 60vh;
+    border: 2px solid #ee161f;
     border-radius: 8px;
     padding: 1rem;
     background-color: #ffe4e1;
     overflow-y: auto;
-    max-height: 60vh;
+    z-index: 10; /* Ensure chat is on top */
   }
   
-  /* Client Hand */
+  /* Client Hand - positioned at bottom center with wrapping */
   .client-hand {
+    position: absolute;
+    bottom: 1.5rem; /* adjust vertical position as needed */
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* wrap to new line instead of scrolling horizontally */
     justify-content: center;
-    margin: 1rem 0;
-    padding: 1rem;
     background-color: #ffe4e1;
     border: 2px solid #ee161f;
     border-radius: 8px;
-    width: 100%;
+    padding: 1rem;
+    max-width: 60vw; /* Limit width to prevent overlap with chat */
+    margin: 0 auto;
   }
   
   .client-hand img {
@@ -232,5 +191,19 @@ html, body {
   
   .client-hand img.selected {
     border: 3px solid red;
+  }
+  
+  /* Winner Div - ensure it appears centered if shown */
+  #winner-div {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffe4e1;
+    border: 2px solid #ee161f;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    z-index: 999;
   }
   

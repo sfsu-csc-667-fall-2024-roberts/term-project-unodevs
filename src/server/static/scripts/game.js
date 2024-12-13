@@ -76,14 +76,6 @@ socket.on("card-played", (data) => {
     // Update opponent's hand count directly from updatedHandCounts
   }
 
-  // Highlight current player
-  if (clientId === Number(data.activePlayerId)) {
-    client.style.border = "black solid 10px";
-  } else {
-    const opponentElement = document.getElementById(`opponent-${data.activePlayerId}`);
-    if (opponentElement) opponentElement.style.border = "red solid 3px";
-  }
-
   // Update counts and buttons
   activePlayerIdInput.value = data.activePlayerId;
   updateButtonsVisibility(data.activePlayerId);
@@ -104,12 +96,7 @@ socket.on("card-drawn", (data) => {
     client.style.border = "none";
   }
 
-  if (clientId === Number(data.activePlayerId)) {
-    client.style.border = "black solid 10px";
-  } else {
-    const opponentElement = document.getElementById(`opponent-${data.activePlayerId}`);
-    if (opponentElement) opponentElement.style.border = "red solid 3px";
-  }
+  
 
   activePlayerIdInput.value = data.activePlayerId;
   updateButtonsVisibility(data.activePlayerId);
