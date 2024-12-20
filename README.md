@@ -7,3 +7,6 @@
 - Demetrio Ricardo Calimag
 - Noah Hai
 - Jiarong Chen
+
+  ## Presentation Link
+  https://youtu.be/3wG_6CuqMC4
